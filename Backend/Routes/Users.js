@@ -80,6 +80,8 @@ router.route("/register").post(async (req, res) => {
             Username: username,
             Email: email,
             Role: role,
+            Phonenumber: number,
+            Image: cloudinaryResponse ? cloudinaryResponse.secure_url : null,
           },
         });
       });
@@ -115,6 +117,8 @@ router.route("/login").post(async (req, res) => {
                   Username: foundUser.Username,
                   Email: foundUser.Email,
                   Role: foundUser.Role,
+                  Phonenumber: foundUser.Phonenumber,
+                  Image: foundUser.Image,
                 },
               });
             }

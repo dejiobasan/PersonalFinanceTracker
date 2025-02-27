@@ -23,9 +23,11 @@ connection.once("open", () => {
 
 const UserRouter = require("./Routes/Users");
 const TransactionRouter = require("./Routes/Transactions");
+const ProfileRouter = require("./Routes/Profile");
 
 app.use("/Users", UserRouter);
 app.use("/Transactions", TransactionRouter);
+app.use("/Profile", ProfileRouter);
 
 app.listen(port, function () {
   console.log(`server started at port ${port}.`);
