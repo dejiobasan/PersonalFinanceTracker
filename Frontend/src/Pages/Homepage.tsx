@@ -1,8 +1,12 @@
-
+import HomeNav from "../Components/Navbars/HomeNav"
 
 const Homepage = () => {
   return (
-    <div>Homepage</div>
+    <div>
+      <header>
+          <HomeNav />
+      </header>
+    </div>
   )
 }
 
