@@ -6,6 +6,7 @@ import {
   WalletMinimal,
   WalletCards,
   ContactRound,
+  LogOut
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -39,7 +40,7 @@ const SideNav = () => {
               key={item.name}
               onClick={() => setActive(item.name)}
               className={`flex items-center gap-3 px-4 py-2 w-full rounded-lg text-left ${
-                active === item.name ? "bg-blue-500" : "hover:bg-blue-500/50"
+                active === item.name ? "bg-blue-500" : "hover:bg-blue-900"
               }`}
             >
               {item.icon}
@@ -47,6 +48,10 @@ const SideNav = () => {
             </button>
           ))}
         </nav>
+
+        <button className="mt-auto px-6 py-3 flex items-center gap-2 bg-blue-500 hover:bg-blue-900 rounded-md w-full text-left">
+          <LogOut size={20} /> Logout
+        </button>
       </aside>
 
       {/* Main Content */}
@@ -77,7 +82,9 @@ const SideNav = () => {
 
         {/* Content Area */}
         <main className="p-6">
-          <div className="h-full border-2 border-dashed border-gray-300 rounded-lg"></div>
+          <div className="h-full border-2 border-dashed border-gray-300 rounded-lg">
+            
+          </div>
         </main>
       </div>
     </div>
