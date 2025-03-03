@@ -23,6 +23,7 @@ interface TransactionStore {
   addTransaction: (data: TransactionData) => Promise<void>;
   fetchAllTransactions: () => Promise<void>;
   fetchATransaction: (id: string) => Promise<void>;
+  fetchUserTransactions: () => Promise<void>;
   updateTransaction: (id: string, data: TransactionData) => Promise<void>;
   deleteAllTransactions: () => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
@@ -43,6 +44,7 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         transactions: [...prevState.transactions, response.data],
         loading: false,
       }));
+      toast.success("Transaction added successfully");
     } catch (error) {
       console.error(error);
       toast.error("An error occurred while adding transaction");
@@ -113,6 +115,7 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
         transactions: [...prevState.transactions, response.data],
         loading: false,
       }));
+      toast.success(response.data.message);
     } catch (error) {
       console.error(error);
       toast.error("An error occurred while updating transaction");

@@ -26,10 +26,12 @@ connection.once("open", () => {
 const UserRouter = require("./Routes/Users");
 const TransactionRouter = require("./Routes/Transactions");
 const ProfileRouter = require("./Routes/Profile");
+const DashbordRouter = require("./Routes/Dashboard");
 
 app.use("/Users", UserRouter);
 app.use("/Transactions", TransactionRouter);
 app.use("/Profile", ProfileRouter);
+app.use("/Dashboard", DashbordRouter);
 
 app.listen(port, function () {
   console.log(`server started at port ${port}.`);

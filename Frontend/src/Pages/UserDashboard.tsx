@@ -1,8 +1,8 @@
-
+import SideNav from "../Components/Navbars/SideNav"
 
 const UserDashboard = () => {
   return (
-    <div>UserDashboard</div>
+    <SideNav />
   )
 }
 
