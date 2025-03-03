@@ -1,8 +1,8 @@
-
+import SideNav from "../Components/Navbars/SideNav"
 
 const AdminDashboard = () => {
   return (
-    <div>AdminDashboard</div>
+    <SideNav />
   )
 }
 
