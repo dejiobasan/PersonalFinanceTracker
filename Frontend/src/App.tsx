@@ -6,6 +6,7 @@ import { useUserStore } from "./Stores/useUserStore";
 import { useEffect } from "react";
 import LoadingSpinner from "./Components/LoadingSpinner";
 import AdminDashboard from "./Pages/AdminDashboard";
+import UserDashboard from "./Pages/UserDashboard";
 
 function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -19,9 +20,10 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Homepage />} />
-      <Route path="/register" element={!user ? <Registerpage /> : <Navigate to="/" />} />
-      <Route path="/login" element={!user ? <Loginpage /> : <Navigate to="/" />} />
-      <Route path="/admindashboard" element={user?.Role === "Admin" ? <AdminDashboard />  : <Navigate to="/" />} />
+      <Route path="/register" element={!user ? <Registerpage /> : <Navigate to={user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"} />} />
+      <Route path="/login" element={!user ? <Loginpage /> : <Navigate to={user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"} />} />
+      <Route path="/admindashboard" element={user?.Role === "Admin" ? <AdminDashboard />  : <Navigate to="/userdashboard" />} />
+      <Route path= "/userdashboard" element={!user ? <UserDashboard /> : <Navigate to="/" /> }  />
     </Routes>
   )
 }

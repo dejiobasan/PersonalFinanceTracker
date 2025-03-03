@@ -10,7 +10,6 @@ const Registerpage = () => {
         style={{ backgroundImage: `url(${shapeBg})` }}
       ></div>
       <motion.div
-        className="flex justify-center items-center min-h-screen bg-gray-100"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}

@@ -79,7 +79,7 @@ router.route("/register").post(async (req, res) => {
             Name: name,
             Username: username,
             Email: email,
-            Role: role,
+            Role: user.Role,
             Phonenumber: number,
             Image: cloudinaryResponse ? cloudinaryResponse.secure_url : null,
           },

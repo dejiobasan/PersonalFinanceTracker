@@ -90,8 +90,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
         data
       );
       if (response.data.success) {
-        set({ user: response.data.User });
+        set({ user: response.data.User, loading: false });
         toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
       }
     } catch (error) {
       console.log(error);

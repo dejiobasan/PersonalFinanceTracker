@@ -50,6 +50,19 @@ export const useTransactionStore = create<TransactionStore>((set) => ({
     }
   },
 
+  fetchUserTransactions: async () => {
+    set({ loading: true });
+    try {
+      const response = await axios.get("/Transactions/getUserTransactions");
+      set({ transactions: response.data.userTransactions, loading: false});
+    } catch (error) {
+      set({ loading: false });
+      console.error(error);
+      toast.error("An error occured while fetching User transactions");
+    }
+
+  },
+
   fetchAllTransactions: async () => {
     set({ loading: true });
     try {

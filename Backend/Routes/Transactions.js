@@ -28,6 +28,16 @@ router.delete("/deleteAlltransactions", protectRoute, adminRoute, async (req, re
     }
 });
 
+router.get("/getUserTransactions", protectRoute, async (req, res) => {
+  try {
+    const userTransactions = await transaction.find({User: req.user._id});
+    res.json({ userTransactions });
+  } catch (error) {
+    console.log("Error in getUserTransactions Controller", error);
+    res.status(500).json({ message: error.message });
+  }
+})
+
 router.get("/getTransaction/:id", protectRoute, async (req, res) => {
   try {
     const Transaction = await transaction.findById(req.params.id);
