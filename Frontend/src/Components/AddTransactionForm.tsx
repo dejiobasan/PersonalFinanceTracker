@@ -40,8 +40,8 @@ const AddTransactionForm = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="max-w-md w-full p-8 bg-white rounded-lg shadow-lg">
+    
+      <div className="max-w-lg mx-auto w-full p-8 bg-white rounded-lg shadow-lg">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-semibold">Add Transaction</h2>
         </div>
@@ -133,7 +133,6 @@ const AddTransactionForm = () => {
           </div>
         </form>
       </div>
-    </div>
   );
 };
 

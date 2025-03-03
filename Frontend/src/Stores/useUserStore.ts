@@ -44,6 +44,7 @@ interface LoginData {
 interface LoginResponse {
   success: boolean;
   message: string;
+  token: string;
   User: {
     id: string;
     Name: string;
@@ -104,8 +105,11 @@ export const useUserStore = create<UserStore>((set, get) => ({
   login: async (data: LoginData) => {
     set({ loading: true });
     try {
-      const response = await axios.post<LoginResponse>("/Users/login", data);
+      const response = await axios.post<LoginResponse>("/Users/login", data, {
+        withCredentials: true,
+      });
       if (response.data.success) {
+        localStorage.setItem("token", response.data.token);
         set({ user: response.data.User, loading: false });
         toast.success(response.data.message);
       } else {
@@ -122,6 +126,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     try {
       const response = await axios.post<LogoutResponse>("/Users/logout");
       if (response.data.success) {
+        localStorage.removeItem("token");
         set({ user: null });
         toast.success(response.data.message);
       } else {
@@ -136,12 +141,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
   checkAuth: async () => {
     set({ checkingAuth: true });
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.get("Profile/getProfile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       set({ user: response.data, checkingAuth: false });
     } catch (error) {
-      set({ checkingAuth: false, user: null });
+      set({ user: null, checkingAuth: false });
       console.log(error);
     }
   },

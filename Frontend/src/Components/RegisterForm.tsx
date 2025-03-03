@@ -39,7 +39,7 @@ const RegisterForm = () => {
         number: "",
         image: "",
       });
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Registration failed!", error);
     }

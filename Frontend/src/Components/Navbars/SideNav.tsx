@@ -20,7 +20,6 @@ const sidebarItems = [
   { name: "Dashboard", icon: <LayoutDashboard size={20} />, active: true },
   { name: "Your Transactions", icon: <WalletMinimal size={20} /> },
   { name: "Add Transaction", icon: <WalletCards size={20} /> },
-  { name: "Contact Admin", icon: <ContactRound size={20} /> },
 ];
 
 const SideNav = () => {
@@ -64,6 +63,20 @@ const SideNav = () => {
               <span>{item.name}</span>
             </button>
           ))}
+          {
+            user?.Role === "User" && (
+              <button
+                onClick={() => setActive("Contact Admin")}
+                className={`flex items-center gap-3 px-4 py-2 w-full rounded-lg text-left ${
+                  active === "Contact Admin"
+                    ? "bg-blue-500"
+                    : "hover:bg-blue-900"
+                }`}
+              >
+                <ContactRound size={20} />
+                <span>Contact Admin</span>
+              </button>
+          )}
           {user?.Role === "Admin" && (
             <button
               onClick={() => setActive("View All Transactions")}
