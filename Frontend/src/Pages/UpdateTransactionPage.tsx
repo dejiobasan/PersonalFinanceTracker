@@ -1,27 +1,44 @@
-import { useState } from "react";
+import {  useState, useEffect } from "react";
 import { useTransactionStore } from "../Stores/useTransactionStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Loader, Plus } from "lucide-react";
 
 const UpdateTransactionPage = () => {
-  const { transactions, updateTransaction, loading } = useTransactionStore();
+  const { transactions, updateTransaction, loading, fetchUserTransactions } = useTransactionStore();
   const navigate = useNavigate();
-
   const { id } = useParams<{ id: string }>();
 
-  const transaction = transactions.find((t) => t._id === id);
-
   const [formData, setFormData] = useState({
-    date: transaction?.Date || "",
-    description: transaction?.Description || "",
-    amount: transaction?.Amount || 0,
-    type: transaction?.Type || "",
+    date: "",
+    description: "",
+    amount: 0,
+    type: "Credit",
   });
+
+  useEffect(() => {
+    fetchUserTransactions();
+  }, [fetchUserTransactions]);
+  
+  const transaction = transactions?.find((t) => t._id === id);
+
+  useEffect(() => {
+    if (transaction) {
+      setFormData ({
+        date: transaction.Date || "",
+        description: transaction.Description || "",
+        amount: transaction.Amount || 0,
+        type: transaction.Type || "",
+      });
+    }
+  }, [transaction]);
+
+  if (!id)
+    return <p className="text-center text-blue-500">Invalid Transaction ID</p>;
 
   if (!transaction)
     return <p className="text-center text-blue-500">Transaction not found</p>;
 
-  const HandleChange = (
+  const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -42,7 +59,7 @@ const UpdateTransactionPage = () => {
     }
   };
 
-  const HandleBack = () => {
+  const handleBack = () => {
     navigate("/admindashboard");
   };
 
@@ -67,7 +84,7 @@ const UpdateTransactionPage = () => {
                 name="date"
                 value={formData.date}
                 id="date"
-                onChange={HandleChange}
+                onChange={handleChange}
                 className="block w-full text-2xl border rounded-md border-gray-300 bg-gray-50 px-3 py-1.5 placeholder:text-sm focus:outline-none focus:border-blue-500 sm:text-sm/6"
                 required
                 placeholder="Enter the date"
@@ -85,7 +102,7 @@ const UpdateTransactionPage = () => {
                 name="amount"
                 value={formData.amount}
                 id="amount"
-                onChange={HandleChange}
+                onChange={handleChange}
                 className="block w-full text-2xl border rounded-md border-gray-300 bg-gray-50 px-3 py-1.5 placeholder:text-sm focus:outline-none focus:border-blue-500 sm:text-sm/6"
                 required
                 placeholder="Enter the transaction amount"
@@ -102,7 +119,7 @@ const UpdateTransactionPage = () => {
                 name="description"
                 value={formData.description}
                 id="description"
-                onChange={HandleChange}
+                onChange={handleChange}
                 className="block w-full text-2xl border rounded-md border-gray-300 bg-gray-50 px-3 py-1.5 placeholder:text-sm focus:outline-none focus:border-blue-500 sm:text-sm/6"
                 required
                 placeholder="Describe the transaction"
@@ -119,7 +136,7 @@ const UpdateTransactionPage = () => {
                 name="type"
                 value={formData.type}
                 id="type"
-                onChange={HandleChange}
+                onChange={handleChange}
                 className="block w-full text-2xl border rounded-md border-gray-300 bg-gray-50 px-3 py-1.5 placeholder:text-sm focus:outline-none focus:border-blue-500 sm:text-sm/6"
                 required
               >
@@ -131,7 +148,7 @@ const UpdateTransactionPage = () => {
               <button
                 type="button"
                 className="w-full flex justify-center px-4 py-3 bg-gray-500  text-white rounded-md hover:bg-gray-600"
-                onClick={HandleBack}
+                onClick={handleBack}
               >
                 Cancel
               </button>
