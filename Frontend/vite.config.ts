@@ -8,6 +8,9 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "https://personalfinancetrackerbackend.onrender.com",
+        changeOrigin: true,
+        secure: true, 
+        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },
