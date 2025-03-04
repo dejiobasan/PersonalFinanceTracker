@@ -14,8 +14,8 @@ function App() {
   const { user, checkAuth, checkingAuth } = useUserStore();
 
   useEffect(() => {
-    if (!user) checkAuth();
-  }, [user]);
+    checkAuth();
+  }, [checkAuth]);
 
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -25,31 +25,11 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route
           path="/register"
-          element={
-            user ? (
-              <Navigate
-                to={
-                  user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"
-                }
-              />
-            ) : (
-              <Registerpage />
-            )
-          }
+          element={!user ? <Registerpage /> : <Navigate to="/admindashboard" />}
         />
         <Route
           path="/login"
-          element={
-            user ? (
-              <Navigate
-                to={
-                  user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"
-                }
-              />
-            ) : (
-              <Loginpage />
-            )
-          }
+          element={!user ? <Loginpage /> : <Navigate to="/admindashboard" />}
         />
         <Route
           path="/admindashboard"
@@ -63,7 +43,13 @@ function App() {
         />
         <Route
           path="/userdashboard"
-          element={user ? <UserDashboard /> : <Navigate to="/login" />}
+          element={
+            user?.Role === "User" ? (
+              <UserDashboard />
+            ) : (
+              <Navigate to={user ? "/admindashboard" : "/login"} />
+            )
+          }
         />
         <Route path="/edit/:id" element={<UpdateTransactionPage />} />
       </Routes>

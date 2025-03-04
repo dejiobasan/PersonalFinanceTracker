@@ -1,9 +1,9 @@
 const router = require("express").Router();
 let user = require("../Models/User.js");
 let transaction = require("../Models/Transaction.js");
-const { protectRoute } = require("../Middleware/authMiddleware.js");
+const { protectRoute, adminRoute } = require("../Middleware/authMiddleware.js");
 
-router.get("/adminAnalytics", protectRoute, async (req, res) => {
+router.get("/adminAnalytics", protectRoute, adminRoute, async (req, res) => {
   try {
     const totalUsers = await user.countDocuments();
     const totalCreditTransactions = await transaction.countDocuments({
