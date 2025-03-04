@@ -9,7 +9,7 @@ require("dotenv").config();
 const port = Number(process.env.PORT);
 app.use(
   cors({
-    origin: [process.env.FRONTEND_PORT, process.env.DEPLOYED_PORT], // allow to server to accept request from different origin
+    origin: process.env.DEPLOYED_PORT,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
