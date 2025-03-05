@@ -29,7 +29,11 @@ const SideNav = () => {
   const renderComponent = () => {
     switch (active) {
       case "Dashboard":
-        return user?.Role === "Admin" ? <AdminAnalyticsTab /> : <UserAnalyticsTab />;
+        return user?.Role === "Admin" ? (
+          <AdminAnalyticsTab />
+        ) : (
+          <UserAnalyticsTab />
+        );
       case "Your Transactions":
         return <TransactionList />;
       case "Add Transaction":
@@ -38,6 +42,12 @@ const SideNav = () => {
         return <ContactAdmin />;
       case "View All Transactions":
         return <ViewAllTransactionsList />;
+      default:
+        return user?.Role === "Admin" ? (
+          <AdminAnalyticsTab />
+        ) : (
+          <UserAnalyticsTab />
+        );
     }
   };
 
@@ -63,19 +73,16 @@ const SideNav = () => {
               <span>{item.name}</span>
             </button>
           ))}
-          {
-            user?.Role === "User" && (
-              <button
-                onClick={() => setActive("Contact Admin")}
-                className={`flex items-center gap-3 px-4 py-2 w-full rounded-lg text-left ${
-                  active === "Contact Admin"
-                    ? "bg-blue-500"
-                    : "hover:bg-blue-900"
-                }`}
-              >
-                <ContactRound size={20} />
-                <span>Contact Admin</span>
-              </button>
+          {user?.Role === "User" && (
+            <button
+              onClick={() => setActive("Contact Admin")}
+              className={`flex items-center gap-3 px-4 py-2 w-full rounded-lg text-left ${
+                active === "Contact Admin" ? "bg-blue-500" : "hover:bg-blue-900"
+              }`}
+            >
+              <ContactRound size={20} />
+              <span>Contact Admin</span>
+            </button>
           )}
           {user?.Role === "Admin" && (
             <button
@@ -121,9 +128,7 @@ const SideNav = () => {
           </div>
         </header>
 
-        <main className="p-6">
-          {renderComponent()}
-        </main>
+        <main className="p-6">{renderComponent()}</main>
       </div>
     </div>
   );
