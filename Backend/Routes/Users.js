@@ -75,12 +75,12 @@ router.route("/register").post(async (req, res) => {
           success: true,
           message: "User registered successfully!",
           User: {
-            id: user._id,
-            Name: name,
-            Username: username,
-            Email: email,
-            Role: user.Role,
-            Phonenumber: number,
+            id: newUser._id,
+            Name: newUser.name,
+            Username: newUser.username,
+            Email: newUser.email,
+            Role: newUser.Role,
+            Phonenumber: newUser.number,
             Image: cloudinaryResponse ? cloudinaryResponse.secure_url : null,
           },
         });
