@@ -90,14 +90,16 @@ export const useUserStore = create<UserStore>((set, get) => ({
         data
       );
       if (response.data.success) {
-        set({ user: response.data.User, loading: false });
+        set({ loading: false });
         toast.success(response.data.message);
       } else {
         toast.error(response.data.message);
+        set({ loading: false });
       }
     } catch (error) {
       console.log(error);
       toast.error("An error occurred while registering");
+      set({ loading: false });
     }
   },
 

@@ -60,7 +60,7 @@ const RegisterForm = () => {
 
   const HandleBack = () => {
     navigate("/");
-  }
+  };
 
   return (
     <>

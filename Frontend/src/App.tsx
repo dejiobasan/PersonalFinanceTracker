@@ -25,11 +25,31 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route
           path="/register"
-          element={!user ? <Registerpage /> : <Navigate to={user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"} />}
+          element={
+            !user ? (
+              <Registerpage />
+            ) : (
+              <Navigate
+                to={
+                  user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"
+                }
+              />
+            )
+          }
         />
         <Route
           path="/login"
-          element={!user ? <Loginpage /> : <Navigate to={user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"} />}
+          element={
+            !user ? (
+              <Loginpage />
+            ) : (
+              <Navigate
+                to={
+                  user?.Role === "Admin" ? "/admindashboard" : "/userdashboard"
+                }
+              />
+            )
+          }
         />
         <Route
           path="/admindashboard"
