@@ -17,26 +17,32 @@ router.get(
   }
 );
 
-router.delete("/deleteAlltransactions", protectRoute, adminRoute, async (req, res) => {
+router.delete(
+  "/deleteAlltransactions",
+  protectRoute,
+  adminRoute,
+  async (req, res) => {
     try {
       await transaction.deleteMany({});
-      res.status(200).json({ success: true, message: "All transactions deleted!" });
-    }
-    catch (error) {
+      res
+        .status(200)
+        .json({ success: true, message: "All transactions deleted!" });
+    } catch (error) {
       console.log("Error in deleteAlltransactions Controller", error);
       res.status(500).json({ message: error.message });
     }
-});
+  }
+);
 
 router.get("/getUserTransactions", protectRoute, async (req, res) => {
   try {
-    const userTransactions = await transaction.find({User: req.user._id});
+    const userTransactions = await transaction.find({ User: req.user._id });
     res.json({ userTransactions });
   } catch (error) {
     console.log("Error in getUserTransactions Controller", error);
     res.status(500).json({ message: error.message });
   }
-})
+});
 
 router.get("/getTransaction/:id", protectRoute, async (req, res) => {
   try {
