@@ -25,7 +25,9 @@ router.get("/adminAnalytics", protectRoute, adminRoute, async (req, res) => {
       totalUsers,
       totalCreditTransactions,
       totalDebitTransactions,
-      averageTransactions: Math.round(averageTransactions[0]?.averageAmount || 0),
+      averageTransactions: Math.round(
+        averageTransactions[0]?.averageAmount || 0
+      ),
     });
   } catch (error) {
     console.error("Error in analytics route", error);
@@ -64,7 +66,9 @@ router.get("/userAnalytics", protectRoute, async (req, res) => {
       totalUserTransactions,
       totalUserCreditTransactions,
       totalUserDebitTransactions,
-      averageUserTransactions: Math.round(averageUserTransactions[0]?.averageAmount || 0),
+      averageUserTransactions: Math.round(
+        averageUserTransactions[0]?.averageAmount || 0
+      ),
     });
   } catch (error) {
     console.error("Error in user analytics route", error);
