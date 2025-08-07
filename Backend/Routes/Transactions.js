@@ -11,7 +11,6 @@ router.get(
       const Transactions = await transaction.find({});
       res.json({ Transactions });
     } catch (error) {
-      console.log("Error in getAlltransactions Controller", error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -28,7 +27,6 @@ router.delete(
         .status(200)
         .json({ success: true, message: "All transactions deleted!" });
     } catch (error) {
-      console.log("Error in deleteAlltransactions Controller", error);
       res.status(500).json({ message: error.message });
     }
   }
@@ -39,7 +37,6 @@ router.get("/getUserTransactions", protectRoute, async (req, res) => {
     const userTransactions = await transaction.find({ User: req.user._id });
     res.json({ userTransactions });
   } catch (error) {
-    console.log("Error in getUserTransactions Controller", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -49,7 +46,6 @@ router.get("/getTransaction/:id", protectRoute, async (req, res) => {
     const Transaction = await transaction.findById(req.params.id);
     res.json({ Transaction });
   } catch (error) {
-    console.log("Error in getTransaction Controller", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -70,7 +66,6 @@ router.post("/addTransaction", protectRoute, async (req, res) => {
       Transaction: newTransaction,
     });
   } catch (error) {
-    console.log("Error in addTransaction Controller", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -90,7 +85,6 @@ router.put("/updateTransaction/:id", protectRoute, async (req, res) => {
       Transaction: updatedTransaction,
     });
   } catch (error) {
-    console.log("Error in updateTransaction Controller", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -100,7 +94,6 @@ router.delete("/deleteTransaction/:id", protectRoute, async (req, res) => {
     await transaction.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "Transaction deleted!" });
   } catch (error) {
-    console.log("Error in deleteTransaction Controller", error);
     res.status(500).json({ message: error.message });
   }
 });

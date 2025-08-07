@@ -7,7 +7,6 @@ router.get("/getProfile", protectRoute, async (req, res) => {
     try {
         res.json(req.user);
     } catch (error) {
-        console.error("Error in getProfile controller", error.message);
         res.status(500).json({ message: "Error fetching profile", error: error.message });
     }
 });

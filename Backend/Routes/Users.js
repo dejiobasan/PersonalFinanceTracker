@@ -127,7 +127,6 @@ router.route("/login").post(async (req, res) => {
       }
     });
   } catch (error) {
-    console.error("Error on the Login Controller", error);
     return res.status(500).json({ message: error.message });
   }
 });
@@ -146,7 +145,6 @@ router.route("/logout").post(async (req, res) => {
     res.clearCookie("refreshToken");
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    console.log("Error in Logout Controller", error);
     res.status(500).json({ message: "Server Error!", error: error.message });
   }
 });
@@ -179,7 +177,6 @@ router.route("/refresh-token").post(async (req, res) => {
 
     res.json({ message: "Token refreshed successfully!" });
   } catch (error) {
-    console.log("Error in Login Controller", error);
     res.status(500).json({ message: "Server Error!", error: error.message });
   }
 });

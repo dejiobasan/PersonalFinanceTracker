@@ -30,7 +30,6 @@ router.get("/adminAnalytics", protectRoute, adminRoute, async (req, res) => {
       ),
     });
   } catch (error) {
-    console.error("Error in analytics route", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -71,7 +70,6 @@ router.get("/userAnalytics", protectRoute, async (req, res) => {
       ),
     });
   } catch (error) {
-    console.error("Error in user analytics route", error);
     res.status(500).json({ message: error.message });
   }
 });

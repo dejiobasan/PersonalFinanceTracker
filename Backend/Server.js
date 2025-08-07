@@ -25,7 +25,7 @@ mongoose.connect(process.env.FinanceDB, {
 });
 const connection = mongoose.connection;
 connection.once("open", () => {
-  console.log("MongoDB database connection established successfully!");
+  console.log("MongoDB database connection established successfully");
 });
 
 const UserRouter = require("./Routes/Users");

@@ -26,13 +26,11 @@ const protectRoute = async (req, res, next) => {
           .status(401)
           .json({ message: "Unauthorized - accessToken has expired!" });
       }
-      console.log("Error in token verification", error.message);
       return res
         .status(401)
         .json({ message: "Unauthorized - Invalid access token!" });
     }
   } catch (error) {
-    console.log("Error in protectRoute middleware", error.message);
     return res
       .status(401)
       .json({ message: "Unauthorized - Invalid access token!" });
