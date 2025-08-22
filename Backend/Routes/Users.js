@@ -49,7 +49,7 @@ router.route("/register").post(async (req, res) => {
   const { name, username, email, password, image, number } = req.body;
   const userExists = await user.findOne({ email });
   if (userExists) {
-    return res.status(400).json({ message: "User already exists!" });
+    return res.status(400).json({ message: "Credentials already exists!" });
   }
   let cloudinaryResponse = null;
   if (image) {
@@ -73,7 +73,7 @@ router.route("/register").post(async (req, res) => {
       await newUser.save().then(() => {
         res.status(200).json({
           success: true,
-          message: "User registered successfully!",
+          message: "Registration successful!",
           User: {
             id: newUser._id,
             Name: newUser.name,
@@ -110,7 +110,7 @@ router.route("/login").post(async (req, res) => {
               setCookies(res, accessToken, refreshToken);
               return res.status(200).json({
                 success: true,
-                message: "User logged in successfully!",
+                message: "Login successful!",
                 User: {
                   id: foundUser._id,
                   Name: foundUser.Name,
@@ -121,6 +121,8 @@ router.route("/login").post(async (req, res) => {
                   Image: foundUser.Image,
                 },
               });
+            } else {
+              return res.status(400).json({ message: "Invalid credentials!" });
             }
           });
         }
