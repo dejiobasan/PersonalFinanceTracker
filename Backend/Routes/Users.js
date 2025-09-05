@@ -6,7 +6,7 @@ const cloudinary = require("../Lib/Cloudinary.js");
 let user = require("../Models/User.js");
 require("dotenv").config();
 
-// Generate tokens
+
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
@@ -19,29 +19,28 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
-// Store refresh token in Redis
+
 const storeRefreshToken = async (userId, refreshToken) => {
   await redis.set(
     `refresh_token: ${userId}`,
     refreshToken,
     "EX",
     7 * 24 * 60 * 60
-  ); // 7days
+  );
 };
 
-// Set cookies
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
-    httpOnly: true, //prevent XSS attacks, cross site scripting attacks
+    httpOnly: true,
     secure: true,
-    sameSite: "None", //prevents CSRF attack, cross-site request forgery
-    maxAge: 15 * 60 * 1000, //15minutes
+    sameSite: "None",
+    maxAge: 15 * 60 * 1000,
   });
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true, //prevent XSS attacks, cross site scripting attacks
+    httpOnly: true,
     secure: true,
-    sameSite: "None", //prevents CSRF attack, cross-site request forgery
-    maxAge: 7 * 24 * 60 * 60 * 1000, //7days
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
 
@@ -76,12 +75,6 @@ router.route("/register").post(async (req, res) => {
           message: "Registration successful!",
           User: {
             id: newUser._id,
-            Name: newUser.name,
-            Username: newUser.username,
-            Email: newUser.email,
-            Role: newUser.Role,
-            Phonenumber: newUser.number,
-            Image: cloudinaryResponse ? cloudinaryResponse.secure_url : null,
           },
         });
       });
@@ -97,7 +90,6 @@ router.route("/login").post(async (req, res) => {
     const { username, password } = req.body;
     await user.findOne({ Username: username }).then((foundUser) => {
       if (!foundUser) {
-        console.error(err);
         return res.status(400).json({ message: "User not found!" });
       } else {
         if (foundUser) {
@@ -151,14 +143,12 @@ router.route("/logout").post(async (req, res) => {
   }
 });
 
-// Refresh Token Route
 router.route("/refresh-token").post(async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
       return res.status(401).json({ message: "Unauthorized!" });
     }
-
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     const storedToken = await redis.get(`refresh_token: ${decoded.userId}`);
     if (storedToken !== refreshToken) {
@@ -171,12 +161,11 @@ router.route("/refresh-token").post(async (req, res) => {
       { expiresIn: "15m" }
     );
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, //prevent XSS attacks, cross site scripting attacks
+      httpOnly: true, 
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict", //prevents CSRF attack, cross-site request forgery
-      maxAge: 15 * 60 * 1000, //15minutes
+      sameSite: "strict", 
+      maxAge: 15 * 60 * 1000, 
     });
-
     res.json({ message: "Token refreshed successfully!" });
   } catch (error) {
     res.status(500).json({ message: "Server Error!", error: error.message });

@@ -2,7 +2,6 @@ const router = require("express").Router();
 const { protectRoute } = require("../Middleware/authMiddleware");
 const user = require("../Models/User");
 
-// Get user profile
 router.get("/getProfile", protectRoute, async (req, res) => {
     try {
         res.json(req.user);
