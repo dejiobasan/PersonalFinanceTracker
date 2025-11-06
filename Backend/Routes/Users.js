@@ -6,7 +6,6 @@ const cloudinary = require("../Lib/Cloudinary.js");
 let user = require("../Models/User.js");
 require("dotenv").config();
 
-
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
@@ -18,7 +17,6 @@ const generateTokens = (userId) => {
 
   return { accessToken, refreshToken };
 };
-
 
 const storeRefreshToken = async (userId, refreshToken) => {
   await redis.set(
@@ -161,10 +159,10 @@ router.route("/refresh-token").post(async (req, res) => {
       { expiresIn: "15m" }
     );
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, 
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict", 
-      maxAge: 15 * 60 * 1000, 
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000,
     });
     res.json({ message: "Token refreshed successfully!" });
   } catch (error) {
