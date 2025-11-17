@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import { Trash2, Edit } from "lucide-react";
 import { useTransactionStore } from "../Stores/useTransactionStore";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 
 const ViewAllTransactionsList = () => {
-  const { transactions, fetchAllTransactions, deleteTransaction, deleteAllTransactions } =
-    useTransactionStore();
+  const {
+    transactions,
+    fetchAllTransactions,
+    deleteTransaction,
+    deleteAllTransactions,
+  } = useTransactionStore();
   const [filter, setFilter] = useState<"all" | "Credit" | "Debit">("all");
 
   useEffect(() => {
@@ -19,14 +22,14 @@ const ViewAllTransactionsList = () => {
 
   const navigate = useNavigate();
 
-  const handleDeleteAll =  async () => {
+  const handleDeleteAll = async () => {
     try {
       await deleteAllTransactions();
       fetchAllTransactions();
     } catch (error) {
       console.error("Failed to delete all transactions", error);
     }
-  }
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-4 bg-white shadow-md rounded-lg">
@@ -66,7 +69,16 @@ const ViewAllTransactionsList = () => {
             {filteredTransactions.length > 0 ? (
               filteredTransactions.map((t) => (
                 <tr key={t._id} className="border-b">
-                  <td className="p-2">{dayjs(t.Date).format("LL")}</td>
+                  <td className="p-2">
+                    {new Date(t.Date).toLocaleString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </td>
                   <td className="p-2">{t.Description}</td>
                   <td
                     className={`p-2 font-semibold ${

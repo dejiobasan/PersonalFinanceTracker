@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Trash2, Edit } from "lucide-react";
 import { useTransactionStore } from "../Stores/useTransactionStore";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 
 const TransactionList = () => {
   const { transactions, fetchUserTransactions, deleteTransaction } =
@@ -52,7 +51,16 @@ const TransactionList = () => {
             {filteredTransactions.length > 0 ? (
               filteredTransactions.map((t) => (
                 <tr key={t._id} className="border-b">
-                  <td className="p-2">{dayjs(t.Date).format("LL")}</td>
+                  <td className="p-2">
+                    {new Date(t.Date).toLocaleString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
+                  </td>
                   <td className="p-2">{t.Description}</td>
                   <td
                     className={`p-2 font-semibold ${
