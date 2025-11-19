@@ -19,13 +19,10 @@ const generateTokens = (userId) => {
 };
 
 const storeRefreshToken = async (userId, refreshToken) => {
-  await redis.set(
-    `refresh_token:${userId}`,
-    refreshToken,
-    { ex: 7 * 24 * 60 * 60 }
-  );
+  await redis.set(`refresh_token:${userId}`, refreshToken, {
+    ex: 7 * 24 * 60 * 60,
+  });
 };
-
 
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
@@ -137,7 +134,7 @@ router.route("/logout").post(async (req, res) => {
     res.clearCookie("refreshToken");
     res.status(200).json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server Error!", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -166,7 +163,7 @@ router.route("/refresh-token").post(async (req, res) => {
     });
     res.json({ message: "Token refreshed successfully!" });
   } catch (error) {
-    res.status(500).json({ message: "Server Error!", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 

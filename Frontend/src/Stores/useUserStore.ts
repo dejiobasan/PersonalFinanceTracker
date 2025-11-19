@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "../Lib/axios";
 import { toast } from "react-hot-toast";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface User {
   id: string;
@@ -71,100 +72,115 @@ interface UserStore {
   refreshToken: () => Promise<void>;
 }
 
-export const useUserStore = create<UserStore>((set, get) => ({
-  user: null,
-  loading: false,
-  checkingAuth: true,
+export const useUserStore = create<UserStore>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      loading: false,
+      checkingAuth: true,
+      register: async (data: RegisterData) => {
+        set({ loading: true });
+        if (data.password !== data.confirmPassword) {
+          toast.error("Passwords do not match");
+          set({ loading: false });
+          return;
+        }
 
-  register: async (data: RegisterData) => {
-    set({ loading: true });
-    if (data.password !== data.confirmPassword) {
-      toast.error("Passwords do not match");
-      set({ loading: false });
-      return;
-    }
+        try {
+          const response = await axios.post<RegisterResponse>(
+            "/Users/register",
+            data
+          );
+          if (response.data.success) {
+            set({ loading: false });
+            toast.success(response.data.message);
+          } else {
+            toast.error(response.data.message);
+            set({ loading: false });
+          }
+        } catch (error) {
+          console.log(error);
+          toast.error("An error occurred while registering");
+          set({ loading: false });
+        }
+      },
 
-    try {
-      const response = await axios.post<RegisterResponse>(
-        "/Users/register",
-        data
-      );
-      if (response.data.success) {
+      login: async (data: LoginData) => {
+        set({ loading: true });
+        try {
+          const response = await axios.post<LoginResponse>(
+            "/Users/login",
+            data,
+            {
+              withCredentials: true,
+            }
+          );
+          if (response.data.success) {
+            set({ user: response.data.User, loading: false });
+            toast.success(response.data.message);
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (error) {
+          console.log(error);
+          toast.error("An error occurred");
+        }
         set({ loading: false });
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-        set({ loading: false });
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("An error occurred while registering");
-      set({ loading: false });
-    }
-  },
+      },
 
-  login: async (data: LoginData) => {
-    set({ loading: true });
-    try {
-      const response = await axios.post<LoginResponse>("/Users/login", data, {
-        withCredentials: true,
-      });
-      if (response.data.success) {
-        set({ user: response.data.User, loading: false });
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("An error occurred");
-    }
-    set({ loading: false });
-  },
+      logout: async () => {
+        try {
+          const response = await axios.post<LogoutResponse>("/Users/logout");
+          if (response.data.success) {
+            set({ user: null });
+            toast.success(response.data.message);
+          } else {
+            toast.error(response.data.message);
+          }
+        } catch (error) {
+          console.log(error);
+          toast.error("An error occurred");
+        }
+      },
 
-  logout: async () => {
-    try {
-      const response = await axios.post<LogoutResponse>("/Users/logout");
-      if (response.data.success) {
-        set({ user: null });
-        toast.success(response.data.message);
-      } else {
-        toast.error(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("An error occurred");
-    }
-  },
+      checkAuth: async () => {
+        set({ checkingAuth: true });
+        try {
+          const response = await axios.get("Profile/getProfile", {
+            withCredentials: true,
+          });
+          set({ user: response.data, checkingAuth: false });
+        } catch (error) {
+          set({ user: null, checkingAuth: false });
+          console.log(error);
+        }
+      },
 
-  checkAuth: async () => {
-    set({ checkingAuth: true });
-    try {
-      const response = await axios.get("Profile/getProfile", {
-        withCredentials: true,
-      });
-      set({ user: response.data, checkingAuth: false });
-    } catch (error) {
-      set({ user: null, checkingAuth: false });
-      console.log(error);
-    }
-  },
+      refreshToken: async () => {
+        // Prevent multiple simultaneous refresh attempts
+        if (get().checkingAuth) return;
 
-  refreshToken: async () => {
-    // Prevent multiple simultaneous refresh attempts
-    if (get().checkingAuth) return;
-
-    set({ checkingAuth: true });
-    try {
-      const response = await axios.post("/Users/refresh-token");
-      set({ checkingAuth: false });
-      return response.data;
-    } catch (error) {
-      set({ user: null, checkingAuth: false });
-      throw error;
+        set({ checkingAuth: true });
+        try {
+          const response = await axios.post("/Users/refresh-token");
+          set({ checkingAuth: false });
+          return response.data;
+        } catch (error) {
+          set({ user: null, checkingAuth: false });
+          throw error;
+        }
+      },
+    }),
+    {
+      name: "user-storage",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        user: state.user,
+        checkingAuth: state.checkingAuth,
+      }),
     }
-  },
-}));
+  )
+);
 
 let refreshPromise: Promise<void> | null = null;
 

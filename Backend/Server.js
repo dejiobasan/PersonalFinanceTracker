@@ -9,7 +9,8 @@ require("dotenv").config();
 const port = Number(process.env.PORT);
 app.use(
   cors({
-    origin: process.env.DEPLOYED_PORT,
+    // origin: process.env.DEPLOYED_PORT,
+    origin: process.env.FRONTEND_PORT,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -32,11 +33,13 @@ const UserRouter = require("./Routes/Users");
 const TransactionRouter = require("./Routes/Transactions");
 const ProfileRouter = require("./Routes/Profile");
 const DashbordRouter = require("./Routes/Dashboard");
+const ChatbotRouter = require("./Routes/Chatbot");
 
 app.use("/Users", UserRouter);
 app.use("/Transactions", TransactionRouter);
 app.use("/Profile", ProfileRouter);
 app.use("/Dashboard", DashbordRouter);
+app.use("/Chatbot", ChatbotRouter);
 
 app.listen(port, function () {
   console.log(`server started at port ${port}.`);

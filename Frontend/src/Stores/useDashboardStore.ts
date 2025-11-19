@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "../Lib/axios";
 import { toast } from "react-hot-toast";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface DashboardStore {
   totalUsers: number;
@@ -16,7 +17,8 @@ interface DashboardStore {
   fetchUserDashboardData: () => Promise<void>;
 }
 
-export const useDashboardStore = create<DashboardStore>((set) => ({
+export const useDashboardStore = create<DashboardStore>()(persist(
+(set) => ({
   totalUsers: 0,
   totalCreditTransactions: 0,
   totalDebitTransactions: 0,
@@ -63,5 +65,19 @@ export const useDashboardStore = create<DashboardStore>((set) => ({
       console.error("Failed to fetch dashboard data", error);
       toast.error("An error occurred while fetching dashboard details!");
     }
-  },
-}));
+  },}),
+  {
+    name: "dashboard-store",
+    storage: createJSONStorage(() => localStorage),
+    partialize: (state) => ({
+      totalUsers: state.totalUsers,
+      totalCreditTransactions: state.totalCreditTransactions,
+      totalDebitTransactions: state.totalDebitTransactions,
+      averageTransactions: state.averageTransactions,
+      totalUserTransactions: state.totalUserTransactions,
+      totalUserCreditTransactions: state.totalUserCreditTransactions,
+      totalUserDebitTransactions: state.totalUserDebitTransactions,
+      averageUserTransactions: state.averageUserTransactions,
+    }),
+  }
+));
