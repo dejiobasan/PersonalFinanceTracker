@@ -15,6 +15,7 @@ import ViewAllTransactionsList from "../ViewAllTransactionsList";
 import ContactAdmin from "../ContactAdmin";
 import UserAnalyticsTab from "../UserAnalyticsTab";
 import AdminAnalyticsTab from "../AdminAnalyticsTab";
+import ChatWidget from "../ChatWidget";
 
 const sidebarItems = [
   { name: "Dashboard", icon: <LayoutDashboard size={20} />, active: true },
@@ -129,6 +130,7 @@ const SideNav = () => {
         </header>
 
         <main className="p-6">{renderComponent()}</main>
+        <ChatWidget />
       </div>
     </div>
   );

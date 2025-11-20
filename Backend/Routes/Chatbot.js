@@ -26,7 +26,7 @@ router.post("/chat", protectRoute, async (req, res) => {
       ],
     });
 
-    res.json({ message: response.choices[0].message.content });
+    res.json({ reply: response.choices[0].message.content });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

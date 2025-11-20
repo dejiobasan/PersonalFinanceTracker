@@ -70,6 +70,7 @@ interface UserStore {
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
   refreshToken: () => Promise<void>;
+  postChatbot: (data: string) => Promise<string | undefined>;
 }
 
 export const useUserStore = create<UserStore>()(
@@ -168,6 +169,18 @@ export const useUserStore = create<UserStore>()(
         } catch (error) {
           set({ user: null, checkingAuth: false });
           throw error;
+        }
+      },
+      postChatbot: async (data: string): Promise<string | undefined> => {
+        try {
+          const response = await axios.post<{ reply: string }>(
+            "/Chatbot/chat",
+            { message: data }
+          );
+          return response.data.reply;
+        } catch (error) {
+          toast.error("An error occurred");
+          console.log(error);
         }
       },
     }),
