@@ -9,8 +9,8 @@ require("dotenv").config();
 const port = Number(process.env.PORT);
 app.use(
   cors({
-    origin: process.env.DEPLOYED_PORT,
-    // origin: process.env.FRONTEND_PORT,
+    // origin: process.env.DEPLOYED_PORT,
+    origin: process.env.FRONTEND_PORT,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
