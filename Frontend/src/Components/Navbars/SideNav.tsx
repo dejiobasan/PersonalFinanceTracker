@@ -8,7 +8,6 @@ import {
   ContactRound,
   LogOut,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import TransactionList from "../TransactionList";
 import AddTransactionForm from "../AddTransactionForm";
 import ViewAllTransactionsList from "../ViewAllTransactionsList";
@@ -56,9 +55,7 @@ const SideNav = () => {
     <div className="flex h-screen">
       <aside className="w-64 bg-blue-700 text-white flex flex-col p-4">
         <div className="mb-6">
-          <Link to="/">
             <Wallet color="white" className="h-16 w-16" />
-          </Link>
         </div>
 
         <nav className="space-y-2">
