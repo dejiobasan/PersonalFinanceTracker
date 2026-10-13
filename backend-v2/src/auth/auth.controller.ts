@@ -21,6 +21,7 @@ import {
   ResetPasswordDto,
   ResendOtpDto,
   ResendOtpResponseDto,
+  LogoutResponseDto
 } from './dto';
 import {
   ErrorResponseDto,
@@ -50,7 +51,6 @@ export class AuthController {
     private readonly jwtService: JwtService,
   ) {}
 
-  @UseGuards(JwtGuard)
   @Get('refresh')
   @ApiOperation({
     summary: 'Refresh access token',
@@ -230,5 +230,23 @@ export class AuthController {
     },
   ) {
     return req.user;
+  }
+
+  @ApiOperation({
+    summary: 'Logout user',
+    description: 'Logout user',
+  })
+  @ApiOkResponse({
+    description: 'User logged out successfully',
+    type: LogoutResponseDto,
+  })
+  @ApiResponse({ status: 400, type: ErrorResponseDto })
+  @ApiResponse({ status: 401, type: ErrorResponseDto })
+  @ApiResponse({ status: 500, type: ErrorResponseDto })
+  @Post('logout')
+  async logout(
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.logout(res);
   }
 }

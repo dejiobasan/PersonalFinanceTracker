@@ -6,6 +6,7 @@ import {
   MaxLength,
   Matches,
   IsOptional,
+  IsIn,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -173,10 +174,12 @@ export class verifyEmailDto {
   otp: string;
 
   @ApiProperty({
-    enum: ['email_verification', 'forgot_password'],
+    enum: ['email_verification'],
+    example: 'email_verification',
   })
   @IsString()
   @IsNotEmpty()
+  @IsIn(['email_verification'])
   type: string;
 }
 
@@ -260,6 +263,7 @@ export class ForgotPasswordDto {
   email: string;
 }
 
+
 export class ForgotPasswordResponseDto {
   @ApiProperty()
   success: boolean;
@@ -278,9 +282,11 @@ export class ResendOtpDto {
   email: string;
   @ApiProperty({
     enum: ['email_verification', 'forgot_password'],
+    example: 'email_verification',
   })
   @IsString()
   @IsNotEmpty()
+  @IsIn(['email_verification', 'forgot_password'])
   type: string;
 }
 

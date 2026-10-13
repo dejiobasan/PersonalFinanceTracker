@@ -86,34 +86,39 @@ export class AuthService {
     timestamp: string;
   }> {
     try {
+      if (type !== 'email_verification') {
+        throw new BadRequestException('Invalid OTP type');
+      }
       const user = await this.prisma.user.findUnique({
         where: { email },
       });
       if (!user) {
         throw new NotFoundException('User not found');
       }
-      const res = await this.otpService.verifyOtp(user.userId, otp, type);
+      const res = await this.otpService.verifyOtp(
+        user.userId,
+        otp,
+        'email_verification',
+      );
       if (res) {
-        if (type === 'email_verification') {
-          await this.prisma.$transaction(async (tx) => {
-            await tx.user.update({
-              where: {
-                userId: user.userId,
-              },
-              data: {
-                isVerified: true,
-              },
-            });
+        await this.prisma.$transaction(async (tx) => {
+          await tx.user.update({
+            where: {
+              userId: user.userId,
+            },
+            data: {
+              isVerified: true,
+            },
           });
-        }
+        });
       }
       return {
         success: true,
         statusCode: 200,
-        message: `${type === 'email_verification' ? 'Email verification successful' : 'Otp verification successful'}`,
+        message: 'Email verification successful',
         data: {
           email,
-          isVerified: type === 'email_verification' ? true : user.isVerified,
+          isVerified: true,
         },
         timestamp: new Date().toISOString(),
       };
@@ -416,6 +421,12 @@ export class AuthService {
 
   async resendOtp(dto: ResendOtpDto) {
     try {
+      if (
+        dto.type !== 'email_verification' &&
+        dto.type !== 'forgot_password'
+      ) {
+        throw new BadRequestException('Invalid OTP type');
+      }
       const foundUser = await this.prisma.user.findUnique({
         where: { email: dto.email },
       });
