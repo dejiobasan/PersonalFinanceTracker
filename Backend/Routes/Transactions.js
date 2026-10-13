@@ -13,7 +13,7 @@ router.get(
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
+  },
 );
 
 router.delete(
@@ -29,7 +29,7 @@ router.delete(
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
+  },
 );
 
 router.get("/getUserTransactions", protectRoute, async (req, res) => {
