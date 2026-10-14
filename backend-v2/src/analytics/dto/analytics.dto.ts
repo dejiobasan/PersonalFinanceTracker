@@ -1,53 +1,69 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export class AdminAnalyticsDataDto {
+  @ApiProperty({ example: 120 })
+  totalUsers: number;
+
+  @ApiProperty({ example: 340 })
+  totalDebitTransactions: number;
+
+  @ApiProperty({ example: 210 })
+  totalCreditTransactions: number;
+
+  @ApiProperty({ example: 1520.75 })
+  averageTransactionAmount: number;
+}
+
 export class AdminAnalyticsResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: true })
   success: boolean;
-  @ApiProperty()
+
+  @ApiProperty({ example: 200 })
   statusCode: number;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'Admin analytics retrieved successfully' })
   message: string;
+
   @ApiProperty({
+    type: () => AdminAnalyticsDataDto,
     description: 'Platform-wide analytics',
-    example: {
-      totalUsers: 120,
-      totalDebitTransactions: 340,
-      totalCreditTransactions: 210,
-      averageTransactionAmount: 1520.75,
-    },
   })
-  data: {
-    totalUsers: number;
-    totalDebitTransactions: number;
-    totalCreditTransactions: number;
-    averageTransactionAmount: number;
-  };
-  @ApiProperty()
+  data: AdminAnalyticsDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
 
+export class UserAnalyticsDataDto {
+  @ApiProperty({ example: 15 })
+  totalUserTransactions: number;
+
+  @ApiProperty({ example: 6 })
+  totalUserCreditTransactions: number;
+
+  @ApiProperty({ example: 9 })
+  totalUserDebitTransactions: number;
+
+  @ApiProperty({ example: 980.5 })
+  averageUserTransactionAmount: number;
+}
+
 export class UserAnalyticsResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: true })
   success: boolean;
-  @ApiProperty()
+
+  @ApiProperty({ example: 200 })
   statusCode: number;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'User analytics retrieved successfully' })
   message: string;
+
   @ApiProperty({
+    type: () => UserAnalyticsDataDto,
     description: 'Analytics for the logged in user',
-    example: {
-      totalUserTransactions: 15,
-      totalUserCreditTransactions: 6,
-      totalUserDebitTransactions: 9,
-      averageUserTransactionAmount: 980.5,
-    },
   })
-  data: {
-    totalUserTransactions: number;
-    totalUserCreditTransactions: number;
-    totalUserDebitTransactions: number;
-    averageUserTransactionAmount: number;
-  };
-  @ApiProperty()
+  data: UserAnalyticsDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }

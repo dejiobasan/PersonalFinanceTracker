@@ -197,7 +197,14 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
       if (!foundUser.isVerified) {
-        throw new UnauthorizedException('User is not verified');
+        const otp = await this.otpService.createOtp(
+          foundUser.userId,
+          'email_verification',
+        );
+        this.emailService.sendOtpEmail(foundUser.email, foundUser.name, otp);
+        throw new UnauthorizedException(
+          'User is not verified. A new verification OTP has been sent to your email.',
+        );
       }
       const isPasswordValid = await bcrypt.compare(
         password,

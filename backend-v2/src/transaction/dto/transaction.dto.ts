@@ -60,83 +60,129 @@ export class AdminTransactionQueryDto extends PaginationQueryDto {
   name?: string;
 }
 
-const transactionExample = {
-  transactionId: '12345678-1234-1234-1234-123456789012',
-  userId: '12345678-1234-1234-1234-123456789012',
-  amount: 2500.5,
-  description: 'Grocery shopping',
-  type: 'DEBIT',
-  dateCreated: '2026-10-13T19:00:00.000Z',
-};
+export class TransactionDataDto {
+  @ApiProperty({ example: '12345678-1234-1234-1234-123456789012' })
+  transactionId: string;
 
-const metaExample = { total: 1, page: 1, limit: 10, totalPages: 1 };
+  @ApiProperty({ example: '12345678-1234-1234-1234-123456789012' })
+  userId: string;
+
+  @ApiProperty({ example: 2500.5 })
+  amount: number;
+
+  @ApiProperty({ example: 'Grocery shopping' })
+  description: string;
+
+  @ApiProperty({ enum: TransactionType, example: TransactionType.DEBIT })
+  type: TransactionType;
+
+  @ApiProperty({ example: '2026-10-13T19:00:00.000Z' })
+  dateCreated: Date;
+}
 
 export class TransactionResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: true })
   success: boolean;
-  @ApiProperty()
+
+  @ApiProperty({ example: 200 })
   statusCode: number;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'Transaction retrieved successfully' })
   message: string;
-  @ApiProperty({ description: 'Transaction data', example: transactionExample })
-  data: {
-    transactionId: string;
-    userId: string;
-    amount: number;
-    description: string;
-    type: TransactionType;
-    dateCreated: Date;
-  };
-  @ApiProperty()
+
+  @ApiProperty({
+    type: () => TransactionDataDto,
+    description: 'Transaction data',
+  })
+  data: TransactionDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
 
-export class TransactionListResponseDto {
-  @ApiProperty()
-  success: boolean;
-  @ApiProperty()
-  statusCode: number;
-  @ApiProperty()
-  message: string;
+export class TransactionPaginationMetaDto {
+  @ApiProperty({ example: 1 })
+  total: number;
+
+  @ApiProperty({ example: 1 })
+  page: number;
+
+  @ApiProperty({ example: 10 })
+  limit: number;
+
+  @ApiProperty({ example: 1 })
+  totalPages: number;
+}
+
+export class TransactionListDataDto {
   @ApiProperty({
-    description: 'Paginated transactions',
-    example: { items: [transactionExample], meta: metaExample },
+    type: () => [TransactionDataDto],
+    description: 'List of transactions',
   })
-  data: {
-    items: TransactionResponseDto['data'][];
-    meta: { total: number; page: number; limit: number; totalPages: number };
-  };
-  @ApiProperty()
+  items: TransactionDataDto[];
+
+  @ApiProperty({
+    type: () => TransactionPaginationMetaDto,
+    description: 'Pagination metadata',
+  })
+  meta: TransactionPaginationMetaDto;
+}
+
+export class TransactionListResponseDto {
+  @ApiProperty({ example: true })
+  success: boolean;
+
+  @ApiProperty({ example: 200 })
+  statusCode: number;
+
+  @ApiProperty({ example: 'Transactions retrieved successfully' })
+  message: string;
+
+  @ApiProperty({
+    type: () => TransactionListDataDto,
+    description: 'Paginated transactions',
+  })
+  data: TransactionListDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
 
 export class DeleteTransactionResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: true })
   success: boolean;
-  @ApiProperty()
+
+  @ApiProperty({ example: 200 })
   statusCode: number;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'Transaction deleted successfully' })
   message: string;
-  @ApiProperty({
-    type: 'object',
-    additionalProperties: true,
-    nullable: true,
-    example: null,
-  })
-  data: null;
-  @ApiProperty()
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
 
+export class DeleteAllTransactionsDataDto {
+  @ApiProperty({ example: 42 })
+  deletedCount: number;
+}
+
 export class DeleteAllTransactionsResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: true })
   success: boolean;
-  @ApiProperty()
+
+  @ApiProperty({ example: 200 })
   statusCode: number;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'All transactions deleted successfully' })
   message: string;
-  @ApiProperty({ example: { deletedCount: 42 } })
-  data: { deletedCount: number };
-  @ApiProperty()
+
+  @ApiProperty({
+    type: () => DeleteAllTransactionsDataDto,
+    description: 'Deletion summary',
+  })
+  data: DeleteAllTransactionsDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
