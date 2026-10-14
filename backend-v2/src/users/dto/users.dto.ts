@@ -34,47 +34,85 @@ export class UsersQueryDto {
   name?: string;
 }
 
-export class UsersListResponseDto {
-  @ApiProperty()
-  success: boolean;
-  @ApiProperty()
-  statusCode: number;
-  @ApiProperty()
-  message: string;
+export class UserListItemDto {
+  @ApiProperty({ example: '12345678-1234-1234-1234-123456789012' })
+  userId: string;
+
+  @ApiProperty({ example: 'John Doe' })
+  name: string;
+
+  @ApiProperty({ example: 'john.doe@example.com' })
+  email: string;
+
   @ApiProperty({
-    description: 'Paginated users with their transaction counts',
-    example: {
-      items: [
-        {
-          userId: '12345678-1234-1234-1234-123456789012',
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          userImage: 'https://example.com/user-image.jpg',
-          phoneNumber: '1234567890',
-          isVerified: true,
-          role: 'USER',
-          createdAt: '2026-10-13T19:00:00.000Z',
-          totalTransactions: 15,
-        },
-      ],
-      meta: { total: 1, page: 1, limit: 10, totalPages: 1 },
-    },
+    type: String,
+    example: 'https://example.com/user-image.jpg',
+    required: false,
+    nullable: true,
   })
-  data: {
-    items: {
-      userId: string;
-      name: string;
-      email: string;
-      userImage: string | null;
-      phoneNumber: string;
-      isVerified: boolean;
-      role: string;
-      createdAt: Date;
-      totalTransactions: number;
-    }[];
-    meta: { total: number; page: number; limit: number; totalPages: number };
-  };
-  @ApiProperty()
+  userImage: string | null;
+
+  @ApiProperty({ example: '1234567890' })
+  phoneNumber: string;
+
+  @ApiProperty({ example: true })
+  isVerified: boolean;
+
+  @ApiProperty({ example: 'USER' })
+  role: string;
+
+  @ApiProperty({ example: '2026-10-13T19:00:00.000Z' })
+  createdAt: Date;
+
+  @ApiProperty({ example: 15 })
+  totalTransactions: number;
+}
+
+export class PaginationMetaDto {
+  @ApiProperty({ example: 1 })
+  total: number;
+
+  @ApiProperty({ example: 1 })
+  page: number;
+
+  @ApiProperty({ example: 10 })
+  limit: number;
+
+  @ApiProperty({ example: 1 })
+  totalPages: number;
+}
+
+export class UsersListDataDto {
+  @ApiProperty({
+    type: () => [UserListItemDto],
+    description: 'List of users',
+  })
+  items: UserListItemDto[];
+
+  @ApiProperty({
+    type: () => PaginationMetaDto,
+    description: 'Pagination metadata',
+  })
+  meta: PaginationMetaDto;
+}
+
+export class UsersListResponseDto {
+  @ApiProperty({ example: true })
+  success: boolean;
+
+  @ApiProperty({ example: 200 })
+  statusCode: number;
+
+  @ApiProperty({ example: 'Users fetched successfully' })
+  message: string;
+
+  @ApiProperty({
+    type: () => UsersListDataDto,
+    description: 'Paginated users with their transaction counts',
+  })
+  data: UsersListDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
 
@@ -102,50 +140,78 @@ export class UpdateProfileDto {
   phoneNumber?: string;
 }
 
-export class UpdateProfileResponseDto {
-  @ApiProperty()
-  success: boolean;
-  @ApiProperty()
-  statusCode: number;
-  @ApiProperty()
-  message: string;
+export class UserProfileDataDto {
+  @ApiProperty({ example: '12345678-1234-1234-1234-123456789012' })
+  userId: string;
+
+  @ApiProperty({ example: 'john.doe@example.com' })
+  email: string;
+
+  @ApiProperty({ example: 'John Doe' })
+  name: string;
+
   @ApiProperty({
-    description: 'Updated user data',
-    example: {
-      userId: '12345678-1234-1234-1234-123456789012',
-      email: 'john.doe@example.com',
-      name: 'John Doe',
-      userImage: 'https://example.com/user-image.jpg',
-      phoneNumber: '1234567890',
-      isVerified: true,
-      role: 'USER',
-    },
+    type: String,
+    example: 'https://example.com/user-image.jpg',
+    required: false,
+    nullable: true,
   })
-  data: {
-    userId: string;
-    email: string;
-    name: string;
-    userImage: string | null;
-    phoneNumber: string;
-    isVerified: boolean;
-    role: string;
-  };
-  @ApiProperty()
+  userImage: string | null;
+
+  @ApiProperty({ example: '1234567890' })
+  phoneNumber: string;
+
+  @ApiProperty({ example: true })
+  isVerified: boolean;
+
+  @ApiProperty({ example: 'USER' })
+  role: string;
+}
+
+export class UpdateProfileResponseDto {
+  @ApiProperty({ example: true })
+  success: boolean;
+
+  @ApiProperty({ example: 200 })
+  statusCode: number;
+
+  @ApiProperty({ example: 'Profile updated successfully' })
+  message: string;
+
+  @ApiProperty({
+    type: () => UserProfileDataDto,
+    description: 'Updated user data',
+  })
+  data: UserProfileDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }
 
+export class DeleteUserDataDto {
+  @ApiProperty({ example: 12 })
+  deletedTransactions: number;
+
+  @ApiProperty({ example: 2 })
+  deletedOtps: number;
+}
+
 export class DeleteUserResponseDto {
-  @ApiProperty()
+  @ApiProperty({ example: true })
   success: boolean;
-  @ApiProperty()
+
+  @ApiProperty({ example: 200 })
   statusCode: number;
-  @ApiProperty()
+
+  @ApiProperty({ example: 'User deleted successfully' })
   message: string;
+
   @ApiProperty({
+    type: () => DeleteUserDataDto,
     description: 'Number of records removed',
-    example: { deletedTransactions: 12, deletedOtps: 2 },
   })
-  data: { deletedTransactions: number; deletedOtps: number };
-  @ApiProperty()
+  data: DeleteUserDataDto;
+
+  @ApiProperty({ example: '2026-10-14T07:52:48.000Z' })
   timestamp: string;
 }

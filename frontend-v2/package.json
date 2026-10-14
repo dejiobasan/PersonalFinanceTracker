@@ -6,23 +6,25 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typegen:api-service": "openapi-typescript http://localhost:8000/api/json --output ./src/types/api/api-service.ts"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.5.0",
+    "@tanstack/react-query": "^5.64.1",
+    "@tanstack/react-table": "^8.21.2",
+    "autoprefixer": "^10.4.24",
+    "dayjs": "^1.11.13",
+    "formik": "^2.4.6",
+    "framer-motion": "^12.0.11",
+    "lucide-react": "^0.511.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "react-redux": "^9.2.0",
     "react-toastify": "^11.0.3",
-    "yup": "^1.6.1",
-    "dayjs": "^1.11.13",
-    "formik": "^2.4.6",
-    "framer-motion": "^12.0.11",
-    "lucide-react": "^0.511.0",
-    "@reduxjs/toolkit": "^2.5.0",
-    "@tanstack/react-query": "^5.64.1",
-    "@tanstack/react-table": "^8.21.2",
-    "autoprefixer": "^10.4.24"
+    "redux-persist": "^6.0.0",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
@@ -31,9 +33,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "openapi-typescript": "^7.8.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "openapi-typescript": "^7.8.0"
+    "typescript": "^5"
   },
   "packageManager": "yarn@1.22.22"
 }

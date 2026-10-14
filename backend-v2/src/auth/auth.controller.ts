@@ -6,6 +6,7 @@ import {
   Req,
   Res,
   UseGuards,
+  HttpCode
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
@@ -17,11 +18,15 @@ import {
   VerifyEmailResponseDto,
   verifyEmailDto,
   ForgotPasswordDto,
+  ForgotPasswordResponseDto,
   changePasswordDto,
+  changePasswordResponseDto,
   ResetPasswordDto,
+  ResetPasswordResponseDto,
   ResendOtpDto,
   ResendOtpResponseDto,
-  LogoutResponseDto
+  LogoutResponseDto,
+  GetMeResponseDto,
 } from './dto';
 import {
   ErrorResponseDto,
@@ -34,6 +39,7 @@ import {
   ApiBearerAuth,
   ApiResponse,
   ApiOperation,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { Response, Request } from 'express';
 import { JwtGuard } from './guard';
@@ -51,19 +57,19 @@ export class AuthController {
     private readonly jwtService: JwtService,
   ) {}
 
-  @Get('refresh')
+  @Post('refresh')
+  @HttpCode(200)
+  @ApiCookieAuth('refresh_token')
   @ApiOperation({
     summary: 'Refresh access token',
-    description: 'Refresh access token',
+    description: 'Issues a new access token using the refresh_token cookie.',
   })
   @ApiOkResponse({
-    description: 'Access token successfully refreshed',
+    description: 'Access token refreshed',
     type: RefreshResponseDto,
   })
-  @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
   @ApiResponse({ status: 500, type: ErrorResponseDto })
-  @ApiBearerAuth()
   async refresh(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -139,7 +145,7 @@ export class AuthController {
   @Throttle({ otp: { limit: 3, ttl: 300000 } })
   @ApiOkResponse({
     description: 'Password reset email sent successfully',
-    type: RegisterResponseDto,
+    type: ForgotPasswordResponseDto,
   })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 409, type: ErrorResponseDto })
@@ -156,7 +162,7 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'Password reset successfully',
-    type: RegisterResponseDto,
+    type: ResetPasswordResponseDto,
   })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
@@ -174,7 +180,7 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'Password changed successfully',
-    type: RegisterResponseDto,
+    type: changePasswordResponseDto,
   })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 409, type: ErrorResponseDto })
@@ -209,7 +215,7 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'User data',
-    type: LoginResponseDto,
+    type: GetMeResponseDto,
   })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
@@ -244,9 +250,7 @@ export class AuthController {
   @ApiResponse({ status: 401, type: ErrorResponseDto })
   @ApiResponse({ status: 500, type: ErrorResponseDto })
   @Post('logout')
-  async logout(
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async logout(@Res({ passthrough: true }) res: Response) {
     return this.authService.logout(res);
   }
 }
