@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { BASE_API_URL, COOKIE_NAMES, endpoint } from "@/constants";
+import { BASE_API_URL, COOKIE_NAMES, endpoints } from "@/constants";
 import { clearSession, setSecureSession } from "@/server/auth-session";
 
 export const dynamic = "force-dynamic";
@@ -37,7 +37,7 @@ export async function POST() {
 
   let backendRes: Response;
   try {
-    backendRes = await fetch(`${BASE_API_URL}${endpoint.auth.refresh}`, {
+    backendRes = await fetch(`${BASE_API_URL}${endpoints.auth.refresh}`, {
       method: "POST",
       headers: { Cookie: `refresh_token=${refreshToken}` },
       cache: "no-store",

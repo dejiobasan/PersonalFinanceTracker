@@ -37,7 +37,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         <div className="relative z-10 flex items-center justify-between">
           <Link
             href={APP_PATHS.HOME}
-            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-xl"
+            className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-xl cursor-pointer"
           >
             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner group-hover:bg-white/25 group-hover:scale-105 transition-all duration-200">
               <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white transition-transform duration-200 group-hover:rotate-6" />
@@ -53,7 +53,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
           {/* Mobile Back Link (only visible on mobile screens) */}
           <Link
             href={APP_PATHS.HOME}
-            className="lg:hidden inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-white/90 hover:text-white px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            className="lg:hidden inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-white/90 hover:text-white px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
             <span>Home</span>
@@ -122,10 +122,10 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
       {/* Right Side: Page Content (`children`) */}
       <main className="relative flex-1 flex flex-col justify-center items-center p-6 sm:p-10 lg:p-16 min-h-[calc(100vh-100px)] lg:min-h-screen overflow-y-auto">
         {/* Desktop Back Link */}
-        <div className="w-full max-w-md mb-6 hidden lg:flex justify-end">
+        <div className="w-full max-w-md md:max-w-xl lg:max-w-2xl mb-6 hidden lg:flex justify-end">
           <Link
             href={APP_PATHS.HOME}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors group cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
             <span>Back to website</span>
@@ -133,7 +133,7 @@ const AuthLayout = ({ children }: AuthLayoutProps) => {
         </div>
 
         {/* Form Container */}
-        <div className="w-full max-w-md mx-auto my-auto">
+        <div className="w-full max-w-md md:max-w-xl lg:max-w-2xl mx-auto my-auto">
           {children}
         </div>
       </main>

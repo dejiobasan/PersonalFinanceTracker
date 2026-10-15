@@ -14,6 +14,22 @@ const HOP_BY_HOP_RESPONSE_HEADERS = [
   "set-cookie",
 ];
 
+const PUBLIC_API_ROUTES = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/verify",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/auth/resend-otp",
+  "/auth/logout",
+];
+
+const isPublicRoute = (normalizedPath: string) =>
+  PUBLIC_API_ROUTES.some(
+    (route) =>
+      normalizedPath === route || normalizedPath.startsWith(`${route}/`),
+  );
+
 async function handler(req: NextRequest, { params }: Ctx) {
   const { path } = await params;
 
@@ -25,12 +41,15 @@ async function handler(req: NextRequest, { params }: Ctx) {
     );
   }
 
+  const normalizedPath = `/${path.join("/")}`;
+  const isPublic = isPublicRoute(normalizedPath);
+
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(COOKIE_NAMES.access)?.value;
   const refreshToken = cookieStore.get(COOKIE_NAMES.refresh)?.value;
 
-  // Access cookie expired: let the client trigger a refresh
-  if (!accessToken) {
+  // Protected route and access cookie missing: return 401 to let client trigger refresh
+  if (!isPublic && !accessToken) {
     return NextResponse.json(
       { success: false, statusCode: 401, message: "Unauthorized" },
       { status: 401 },
@@ -38,31 +57,35 @@ async function handler(req: NextRequest, { params }: Ctx) {
   }
 
   const cookieHeader = [
-    `access_token=${accessToken}`,
+    accessToken ? `access_token=${accessToken}` : null,
     refreshToken ? `refresh_token=${refreshToken}` : null,
   ]
     .filter(Boolean)
     .join("; ");
 
-  const headers = new Headers({ Cookie: cookieHeader });
+  const headers = new Headers();
+  if (cookieHeader) {
+    headers.set("Cookie", cookieHeader);
+  }
+
   const contentType = req.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
+
   const accept = req.headers.get("accept");
   if (accept) headers.set("accept", accept);
 
   const hasBody = req.method !== "GET" && req.method !== "HEAD";
+  const baseUrl = (BASE_API_URL || "").replace(/\/+$/, "");
+  const targetUrl = `${baseUrl}/${path.join("/")}${req.nextUrl.search}`;
 
   let backendRes: Response;
   try {
-    backendRes = await fetch(
-      `${BASE_API_URL}/${path.join("/")}${req.nextUrl.search}`,
-      {
-        method: req.method,
-        headers,
-        body: hasBody ? await req.arrayBuffer() : undefined,
-        cache: "no-store",
-      },
-    );
+    backendRes = await fetch(targetUrl, {
+      method: req.method,
+      headers,
+      body: hasBody ? await req.arrayBuffer() : undefined,
+      cache: "no-store",
+    });
   } catch {
     return NextResponse.json(
       { success: false, statusCode: 502, message: "API unreachable" },

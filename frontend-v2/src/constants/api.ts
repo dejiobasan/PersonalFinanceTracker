@@ -9,11 +9,27 @@ export const COOKIE_NAMES = {
   refresh: "_rt",
 } as const;
 
-export const endpoint = {
+export const REQUEST_METHODS = {
+  GET: "GET",
+  POST: "POST",
+  PUT: "PUT",
+  PATCH: "PATCH",
+  DELETE: "DELETE",
+  HEAD: "HEAD",
+  OPTIONS: "OPTIONS",
+  TRACE: "TRACE",
+  CONNECT: "CONNECT",
+};
+
+export const endpoints = {
   auth: {
     register: "/auth/register",
+    verify: "/auth/verify",
     login: "/auth/login",
     refresh: "/auth/refresh",
     logout: "/auth/logout",
+    resendOtp: "/auth/resend-otp",
+    forgotPassword: "/auth/forgot-password",
+    resetPassword: "/auth/reset-password",
   },
 };
