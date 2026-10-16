@@ -114,9 +114,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
-              tabIndex={-1}
+              aria-pressed={showPassword}
               aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
+              className="absolute right-3.5 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none transition-colors cursor-pointer"
             >
               {showPassword ? (
                 <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />

@@ -6,6 +6,7 @@ import { clearAuthUser } from "@/store/slices/authSlice";
 import { clearSession } from "@/server/auth-session";
 import { useLogoutUserMutation } from "@/services/api";
 import { APP_PATHS } from "@/constants";
+import { getErrorMessage } from "@/utils";
 import { toast } from "react-toastify";
 
 export const useLogout = () => {
@@ -15,18 +16,20 @@ export const useLogout = () => {
 
   const logout = async (showNotification = true) => {
     try {
-      await logoutUser()
-        .unwrap()
-        .catch(() => {
-          // Continue with client & cookie teardown even if network/backend fails
-        });
+      await logoutUser().unwrap();
+      await clearSession();
+      dispatch(clearAuthUser());
       if (showNotification) {
         toast.success("Logged out successfully");
       }
-    } finally {
-      await clearSession();
-      dispatch(clearAuthUser());
       router.push(APP_PATHS.LOGIN);
+    } catch (err: unknown) {
+      const errorMessage = getErrorMessage(
+        err,
+        "Failed to log out. Please try again.",
+      );
+      toast.error(errorMessage);
+      throw err;
     }
   };
 

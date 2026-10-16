@@ -112,7 +112,11 @@ export const DashboardSidebar: FC<DashboardSidebarProps> = ({
   }, [isOpen]);
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } catch {
+      // Failure is already reported via toast in useLogout
+    }
   };
 
   const isLinkActive = (item: NavItem) => {

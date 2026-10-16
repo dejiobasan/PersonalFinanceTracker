@@ -128,7 +128,11 @@ const DashboardHeader: FC<DashboardHeaderProps> = ({ onOpenSidebar }) => {
   }
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } catch {
+      // Failure is already reported via toast in useLogout
+    }
   };
 
   const isAdmin = user?.role === Role.ADMIN || user?.role?.toUpperCase() === "ADMIN";

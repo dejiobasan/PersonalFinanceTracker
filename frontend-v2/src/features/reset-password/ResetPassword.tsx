@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Formik, Form } from "formik";
 import {
   Lock,
@@ -52,7 +52,13 @@ export const ResetPassword: FC = () => {
 
   const handleSubmit = async (
     values: ResetPasswordFormValues,
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void },
+    {
+      setSubmitting,
+      setFieldError,
+    }: {
+      setSubmitting: (isSubmitting: boolean) => void;
+      setFieldError: (field: string, message: string) => void;
+    },
   ) => {
     try {
       dispatch(
@@ -82,6 +88,7 @@ export const ResetPassword: FC = () => {
         "Failed to reset password. The code may be invalid or expired.",
       );
       toast.error(errorMessage);
+      setFieldError("otp", errorMessage);
     } finally {
       setSubmitting(false);
       dispatch(setLoading(false));
@@ -103,25 +110,6 @@ export const ResetPassword: FC = () => {
           Your new password must be at least 8 characters long and contain both
           letters and numbers.
         </p>
-
-        {/* Confirmed Email Status Pill */}
-        {resolvedEmail && (
-          <div className="mt-4 p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-xl flex items-center justify-between text-xs text-emerald-800">
-            <div className="flex items-center gap-2 truncate">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span className="truncate">
-                Resetting password for:{" "}
-                <strong className="font-semibold">{resolvedEmail}</strong>
-              </span>
-            </div>
-            {resolvedOtp && (
-              <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-medium text-[11px] shrink-0">
-                <Check className="w-3 h-3 text-emerald-600" />
-                Code verified
-              </span>
-            )}
-          </div>
-        )}
       </div>
 
       <Formik
@@ -142,10 +130,32 @@ export const ResetPassword: FC = () => {
           const hasLetter = /[A-Za-z]/.test(values.newPassword);
           const hasNumber = /\d/.test(values.newPassword);
 
+          const showEmailField = !resolvedEmail || Boolean(errors.email);
+          const showOtpField = !resolvedOtp || Boolean(errors.otp);
+
           return (
             <Form className="space-y-4" noValidate>
-              {/* Email Address (editable only if missing) */}
-              {!resolvedEmail && (
+              {/* Confirmed Email Status Pill */}
+              {resolvedEmail && !showEmailField && (
+                <div className="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-xl flex items-center justify-between text-xs text-emerald-800">
+                  <div className="flex items-center gap-2 truncate">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="truncate">
+                      Resetting password for:{" "}
+                      <strong className="font-semibold">{resolvedEmail}</strong>
+                    </span>
+                  </div>
+                  {resolvedOtp && !showOtpField && (
+                    <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-medium text-[11px] shrink-0">
+                      <Check className="w-3 h-3 text-emerald-600" />
+                      Code verified
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Email Address (editable if missing or if error present) */}
+              {showEmailField && (
                 <Input
                   id="email"
                   name="email"
@@ -159,13 +169,13 @@ export const ResetPassword: FC = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={
-                    touched.email && errors.email ? errors.email : undefined
+                    (touched.email && errors.email) || errors.email || undefined
                   }
                 />
               )}
 
-              {/* 6-Digit OTP (editable only if missing) */}
-              {!resolvedOtp && (
+              {/* 6-Digit OTP (editable if missing or if error present) */}
+              {showOtpField && (
                 <Input
                   id="otp"
                   name="otp"
@@ -178,7 +188,7 @@ export const ResetPassword: FC = () => {
                   value={values.otp}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.otp && errors.otp ? errors.otp : undefined}
+                  error={(touched.otp && errors.otp) || errors.otp || undefined}
                 />
               )}
 

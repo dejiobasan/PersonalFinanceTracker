@@ -163,21 +163,6 @@ export class AuthService {
         throw new ConflictException('User already exists');
       }
       if (user && !user?.isVerified) {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const imageUrl = userImage
-          ? await this.cloudinaryService.uploadImage(userImage)
-          : null;
-        await this.prisma.user.update({
-          where: {
-            userId: user.userId,
-          },
-          data: {
-            name,
-            password: hashedPassword,
-            phoneNumber,
-            userImage: imageUrl,
-          },
-        });
         const emailSent = await this.sendVerificationOtp(
           user.userId,
           user.email,
@@ -187,7 +172,7 @@ export class AuthService {
         return {
           message: emailSent
             ? 'Check your email to verify your account'
-            : 'Account updated successfully, but we could not send your verification code.',
+            : 'Account registered, but we could not send your verification code.',
           data: { email: user.email, isVerified: false, emailSent },
           timestamp: new Date().toISOString(),
         };
@@ -348,7 +333,7 @@ export class AuthService {
 
       const foundUser = await this.prisma.user.findUnique({
         where: {
-          email: payload.email,
+          userId: payload.sub,
         },
       });
 
