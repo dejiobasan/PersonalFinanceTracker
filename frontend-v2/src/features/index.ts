@@ -4,3 +4,8 @@ export * from "./sign-up";
 export * from "./forgot-password";
 export * from "./reset-password";
 export * from "./verify-otp";
+export * from "./dashboard";
+export * from "./transactions";
+export * from "./user-management";
+export * from "./transactions-management";
+export * from "./settings";

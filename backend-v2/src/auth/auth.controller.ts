@@ -6,7 +6,7 @@ import {
   Req,
   Res,
   UseGuards,
-  HttpCode
+  HttpCode,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
@@ -50,7 +50,6 @@ import { OtpThrottlerGuard } from './guard/throttler.guard';
 
 @ApiTags('auth')
 @Controller('auth')
-@UseGuards(OtpThrottlerGuard)
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -102,6 +101,7 @@ export class AuthController {
     summary: 'Register user',
     description: 'Register user',
   })
+  @UseGuards(OtpThrottlerGuard)
   @Throttle({ otp: { limit: 3, ttl: 300000 } })
   @ApiCreatedResponse({
     description: 'User registered successfully',
@@ -127,9 +127,12 @@ export class AuthController {
     description: 'User logged in successfully',
     type: LoginResponseDto,
   })
+  @UseGuards(OtpThrottlerGuard)
+  @Throttle({ otp: { limit: 3, ttl: 300000 } })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
   @ApiResponse({ status: 500, type: ErrorResponseDto })
+  @ApiResponse({ status: 429, type: ThrottlerErrorResponseDto })
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -142,6 +145,7 @@ export class AuthController {
     summary: 'Forgot password',
     description: 'Forgot password',
   })
+  @UseGuards(OtpThrottlerGuard)
   @Throttle({ otp: { limit: 3, ttl: 300000 } })
   @ApiOkResponse({
     description: 'Password reset email sent successfully',
@@ -194,6 +198,7 @@ export class AuthController {
     summary: 'Resend otp',
     description: 'Resend otp',
   })
+  @UseGuards(OtpThrottlerGuard)
   @Throttle({ otp: { limit: 3, ttl: 300000 } })
   @ApiOkResponse({
     description: 'Otp sent successfully',

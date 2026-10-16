@@ -17,6 +17,7 @@ import {
   UserPlus,
 } from "lucide-react";
 import { APP_PATHS } from "@/constants";
+import { useMounted } from "@/hooks";
 
 const navItems = [
   { name: "Overview", href: APP_PATHS.HOME, icon: Sparkles },
@@ -26,17 +27,15 @@ const navItems = [
 
 const AppHeader = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const pathname = usePathname();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Close mobile sidebar on route change
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
     setIsOpen(false);
-  }, [pathname]);
+  }
 
   // Close when window resized to desktop (>= 1024px)
   useEffect(() => {
@@ -79,7 +78,7 @@ const AppHeader = () => {
         {/* Brand / Logo */}
         <Link
           href={APP_PATHS.HOME}
-          className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-xl"
+          className="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-xl cursor-pointer"
         >
           <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner group-hover:bg-white/25 group-hover:scale-105 transition-all duration-200">
             <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white transition-transform duration-200 group-hover:rotate-6" />
@@ -96,7 +95,7 @@ const AppHeader = () => {
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm font-medium text-white/80 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
+              className="text-sm font-medium text-white/80 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer"
             >
               {item.name}
             </Link>
@@ -107,13 +106,13 @@ const AppHeader = () => {
         <div className="hidden lg:flex items-center gap-3">
           <Link
             href={APP_PATHS.LOGIN}
-            className="text-sm font-semibold text-white/90 hover:text-white px-4 py-2.5 rounded-xl hover:bg-white/10 transition-all duration-200"
+            className="text-sm font-semibold text-white/90 hover:text-white px-4 py-2.5 rounded-xl hover:bg-white/10 transition-all duration-200 cursor-pointer"
           >
             Log In
           </Link>
           <Link
             href={APP_PATHS.SIGN_UP}
-            className="inline-flex items-center gap-2 text-sm font-semibold bg-white text-blue-900 hover:bg-blue-50 px-5 py-2.5 rounded-xl shadow-lg shadow-black/15 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+            className="inline-flex items-center gap-2 text-sm font-semibold bg-white text-blue-900 hover:bg-blue-50 px-5 py-2.5 rounded-xl shadow-lg shadow-black/15 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 cursor-pointer"
           >
             <span>Sign Up</span>
             <ArrowRight className="h-4 w-4" />
@@ -124,7 +123,7 @@ const AppHeader = () => {
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="lg:hidden inline-flex items-center justify-center p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/40 transition-colors"
+          className="lg:hidden inline-flex items-center justify-center p-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/40 transition-colors cursor-pointer"
           aria-expanded={isOpen}
           aria-label={isOpen ? "Close menu" : "Open menu"}
         >
@@ -145,7 +144,7 @@ const AppHeader = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.2 }}
                   onClick={() => setIsOpen(false)}
-                  className="fixed inset-0 w-full h-full bg-black/60 backdrop-blur-sm"
+                  className="fixed inset-0 w-full h-full bg-black/60 backdrop-blur-sm cursor-pointer"
                   aria-hidden="true"
                 />
 
@@ -166,7 +165,7 @@ const AppHeader = () => {
                       <Link
                         href={APP_PATHS.HOME}
                         onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-3 cursor-pointer"
                       >
                         <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center text-white shadow-inner">
                           <Wallet className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
@@ -182,7 +181,7 @@ const AppHeader = () => {
                       <button
                         type="button"
                         onClick={() => setIsOpen(false)}
-                        className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white/90 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white/40"
+                        className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white/90 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white/40 cursor-pointer"
                         aria-label="Close menu"
                       >
                         <X className="h-6 w-6" />
@@ -198,7 +197,7 @@ const AppHeader = () => {
                             key={item.name}
                             href={item.href}
                             onClick={() => setIsOpen(false)}
-                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-lg font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-lg font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
                           >
                             <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-blue-300">
                               <Icon className="h-5 w-5" />
@@ -215,7 +214,7 @@ const AppHeader = () => {
                     <Link
                       href={APP_PATHS.LOGIN}
                       onClick={() => setIsOpen(false)}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/20 transition-colors text-base"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold text-white bg-white/10 hover:bg-white/15 border border-white/20 transition-colors text-base cursor-pointer"
                     >
                       <LogIn className="h-5 w-5" />
                       <span>Log In</span>
@@ -224,7 +223,7 @@ const AppHeader = () => {
                     <Link
                       href={APP_PATHS.SIGN_UP}
                       onClick={() => setIsOpen(false)}
-                      className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold bg-white text-blue-900 hover:bg-blue-50 shadow-lg shadow-black/20 transition-all text-base"
+                      className="w-full flex items-center justify-center gap-2 py-3.5 px-4 rounded-xl font-semibold bg-white text-blue-900 hover:bg-blue-50 shadow-lg shadow-black/20 transition-all text-base cursor-pointer"
                     >
                       <UserPlus className="h-5 w-5" />
                       <span>Sign Up</span>

@@ -14,7 +14,6 @@ const PUBLIC_PATHS = [
   APP_PATHS.FORBIDDEN,
 ] as const;
 
-/** Routes meant for unauthenticated guests only (logged-in users will be redirected to dashboard) */
 const AUTH_ROUTES = [
   APP_PATHS.LOGIN,
   APP_PATHS.SIGN_UP,

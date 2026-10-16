@@ -8,7 +8,7 @@ import {
   APP_PATHS,
   AUTH_REFRESH_ROUTE,
   PROXY_BASE_URL,
-  endpoint,
+  endpoints,
 } from "@/constants";
 import { clearSession } from "@/server/auth-session";
 import { sessionExpired } from "./slices/sessionActions";
@@ -40,7 +40,7 @@ const refreshSession = (): Promise<boolean> => {
 };
 
 // A 401 from these endpoints is a real auth failure, not an expired session
-const AUTH_PATHS: string[] = Object.values(endpoint.auth);
+const AUTH_PATHS: string[] = Object.values(endpoints.auth);
 
 const isAuthEndpoint = (url: string) =>
   AUTH_PATHS.some((path) => url === path || url.startsWith(`${path}?`));
@@ -61,6 +61,12 @@ export const baseQueryWithReauth: BaseQueryFn<
       // Retry the original request once with the new cookies
       result = await rawBaseQuery(args, api, extraOptions);
     } else {
+      // Clean up server session cookies on backend as well
+      await rawBaseQuery(
+        { url: endpoints.auth.logout, method: "POST" },
+        api,
+        extraOptions,
+      );
       await clearSession();
       api.dispatch(sessionExpired());
 

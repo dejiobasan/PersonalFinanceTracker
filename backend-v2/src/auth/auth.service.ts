@@ -47,6 +47,25 @@ export class AuthService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  private async sendVerificationOtp(
+    userId: string,
+    email: string,
+    name: string,
+    type: string,
+  ) {
+    const otp = await this.otpService.createOtp(userId, type);
+    try {
+      await this.emailService.sendOtpEmail(email, name, otp);
+      return true;
+    } catch (err) {
+      this.logger.error(
+        `OTP email failed for ${email}`,
+        err instanceof Error ? err.stack : String(err),
+      );
+      return false;
+    }
+  }
+
   async signToken(
     userId: string,
     email: string,
@@ -135,14 +154,29 @@ export class AuthService {
 
   async register(dto: RegisterDto, res: Response) {
     const { name, email, password, userImage, phoneNumber } = dto;
+    const saltRounds = Number(process.env.SALT_ROUNDS ?? 12);
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
       });
-      if (user) {
+      if (user && user?.isVerified) {
         throw new ConflictException('User already exists');
       }
-      const saltRounds = Number(process.env.SALT_ROUNDS ?? 12);
+      if (user && !user?.isVerified) {
+        const emailSent = await this.sendVerificationOtp(
+          user.userId,
+          user.email,
+          user.name,
+          'email_verification',
+        );
+        return {
+          message: emailSent
+            ? 'Check your email to verify your account'
+            : 'Account registered, but we could not send your verification code.',
+          data: { email: user.email, isVerified: false, emailSent },
+          timestamp: new Date().toISOString(),
+        };
+      }
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       const imageUrl = userImage
         ? await this.cloudinaryService.uploadImage(userImage)
@@ -156,14 +190,16 @@ export class AuthService {
           phoneNumber,
         },
       });
-      const otp = await this.otpService.createOtp(
+      const emailSent = await this.sendVerificationOtp(
         newUser.userId,
+        newUser.email,
+        newUser.name,
         'email_verification',
       );
-      this.emailService.sendOtpEmail(newUser.email, newUser.name, otp);
       return {
-        message:
-          'User registered successfully, check your email to verify your account',
+        message: emailSent
+          ? 'User registered successfully, check your email to verify your account'
+          : 'Account created, but we could not send your verification code.',
         data: {
           userId: newUser.userId,
           email: newUser.email,
@@ -172,6 +208,7 @@ export class AuthService {
           isVerified: newUser.isVerified,
           phoneNumber: newUser.phoneNumber,
           role: newUser.role,
+          emailSent,
         },
         timestamp: new Date().toISOString(),
       };
@@ -196,22 +233,25 @@ export class AuthService {
       if (!foundUser) {
         throw new UnauthorizedException('User not found');
       }
-      if (!foundUser.isVerified) {
-        const otp = await this.otpService.createOtp(
-          foundUser.userId,
-          'email_verification',
-        );
-        this.emailService.sendOtpEmail(foundUser.email, foundUser.name, otp);
-        throw new UnauthorizedException(
-          'User is not verified. A new verification OTP has been sent to your email.',
-        );
-      }
       const isPasswordValid = await bcrypt.compare(
         password,
         foundUser.password,
       );
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid credentials');
+      }
+      if (!foundUser.isVerified) {
+        const emailSent = await this.sendVerificationOtp(
+          foundUser.userId,
+          foundUser.email,
+          foundUser.name,
+          'email_verification',
+        );
+        throw new UnauthorizedException(
+          emailSent
+            ? 'User is not verified. A new verification OTP has been sent to your email.'
+            : 'User is not verified, but we could not send your verification code. Please try again later.',
+        );
       }
       const tokens = await this.signToken(
         foundUser.userId,
@@ -293,16 +333,16 @@ export class AuthService {
 
       const foundUser = await this.prisma.user.findUnique({
         where: {
-          email: payload.email,
+          userId: payload.sub,
         },
       });
 
       if (!foundUser) throw new UnauthorizedException('User not found');
 
       const { access_token } = await this.signToken(
-        payload.sub,
-        payload.email,
-        payload.role,
+        foundUser.userId,
+        foundUser.email,
+        foundUser.role,
       );
 
       res.cookie('access_token', access_token, {
@@ -338,14 +378,17 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
-      const otp = await this.otpService.createOtp(
+      const emailSent = await this.sendVerificationOtp(
         user.userId,
+        user.email,
+        user.name,
         'forgot_password',
       );
-      this.emailService.sendOtpEmail(user.email, user.name, otp);
       return {
-        message: 'Password reset email sent successfully',
-        data: null,
+        message: emailSent
+          ? 'Password reset email sent successfully'
+          : 'Failed to send password reset email. Please try again later.',
+        data: { emailSent },
       };
     } catch (error) {
       if (
@@ -428,10 +471,7 @@ export class AuthService {
 
   async resendOtp(dto: ResendOtpDto) {
     try {
-      if (
-        dto.type !== 'email_verification' &&
-        dto.type !== 'forgot_password'
-      ) {
+      if (dto.type !== 'email_verification' && dto.type !== 'forgot_password') {
         throw new BadRequestException('Invalid OTP type');
       }
       const foundUser = await this.prisma.user.findUnique({
@@ -440,11 +480,17 @@ export class AuthService {
       if (!foundUser) {
         throw new UnauthorizedException('User not found');
       }
-      const otp = await this.otpService.createOtp(foundUser.userId, dto.type);
-      this.emailService.sendOtpEmail(foundUser.email, foundUser.name, otp);
+      const emailSent = await this.sendVerificationOtp(
+        foundUser.userId,
+        foundUser.email,
+        foundUser.name,
+        dto.type,
+      );
       return {
-        message: 'Otp sent successfully',
-        data: null,
+        message: emailSent
+          ? 'Otp sent successfully'
+          : 'Failed to send OTP. Please try again later.',
+        data: { emailSent },
       };
     } catch (error) {
       if (
