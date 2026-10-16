@@ -154,14 +154,30 @@ export class AuthService {
 
   async register(dto: RegisterDto, res: Response) {
     const { name, email, password, userImage, phoneNumber } = dto;
+    const saltRounds = Number(process.env.SALT_ROUNDS ?? 12);
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
       });
-      if (user?.isVerified) {
+      if (user && user?.isVerified) {
         throw new ConflictException('User already exists');
       }
-      if (user) {
+      if (user && !user?.isVerified) {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const imageUrl = userImage
+          ? await this.cloudinaryService.uploadImage(userImage)
+          : null;
+        await this.prisma.user.update({
+          where: {
+            userId: user.userId,
+          },
+          data: {
+            name,
+            password: hashedPassword,
+            phoneNumber,
+            userImage: imageUrl,
+          },
+        });
         const emailSent = await this.sendVerificationOtp(
           user.userId,
           user.email,
@@ -171,12 +187,11 @@ export class AuthService {
         return {
           message: emailSent
             ? 'Check your email to verify your account'
-            : 'Account created, but we could not send your verification code. Please request a new one.',
+            : 'Account updated successfully, but we could not send your verification code.',
           data: { email: user.email, isVerified: false, emailSent },
           timestamp: new Date().toISOString(),
         };
       }
-      const saltRounds = Number(process.env.SALT_ROUNDS ?? 12);
       const hashedPassword = await bcrypt.hash(password, saltRounds);
       const imageUrl = userImage
         ? await this.cloudinaryService.uploadImage(userImage)
@@ -199,7 +214,7 @@ export class AuthService {
       return {
         message: emailSent
           ? 'User registered successfully, check your email to verify your account'
-          : 'Account created, but we could not send your verification code. Please request a new one.',
+          : 'Account created, but we could not send your verification code.',
         data: {
           userId: newUser.userId,
           email: newUser.email,
@@ -233,6 +248,13 @@ export class AuthService {
       if (!foundUser) {
         throw new UnauthorizedException('User not found');
       }
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        foundUser.password,
+      );
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
       if (!foundUser.isVerified) {
         const emailSent = await this.sendVerificationOtp(
           foundUser.userId,
@@ -245,13 +267,6 @@ export class AuthService {
             ? 'User is not verified. A new verification OTP has been sent to your email.'
             : 'User is not verified, but we could not send your verification code. Please try again later.',
         );
-      }
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        foundUser.password,
-      );
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid credentials');
       }
       const tokens = await this.signToken(
         foundUser.userId,

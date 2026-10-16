@@ -81,8 +81,8 @@ export const ForgotPassword: FC = () => {
           Forgot your password?
         </h1>
         <p className="text-sm text-slate-500 mt-2">
-          No worries! Enter your registered email address and we&apos;ll send you
-          a 6-digit code to reset your password.
+          No worries! Enter your registered email address and we&apos;ll send
+          you a 6-digit code to reset your password.
         </p>
       </div>
 

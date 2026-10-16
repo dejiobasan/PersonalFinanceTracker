@@ -46,7 +46,11 @@ export const VerifyOtp: FC = () => {
   const paramEmail = searchParams.get("email");
   const paramType = searchParams.get("type");
 
-  const email = (paramEmail || verification?.userVerificationEmail || "").trim();
+  const email = (
+    paramEmail ||
+    verification?.userVerificationEmail ||
+    ""
+  ).trim();
   const verificationType: VerificationType =
     (paramType as VerificationType) ||
     (verification?.userVerificationType as VerificationType) ||
@@ -156,17 +160,19 @@ export const VerifyOtp: FC = () => {
     }
 
     if (otpCode.length !== OTP_LENGTH) {
-      toast.error(`Please enter all ${OTP_LENGTH} digits of your verification code.`);
+      toast.error(
+        `Please enter all ${OTP_LENGTH} digits of your verification code.`,
+      );
       return;
     }
 
     if (isForgotPasswordFlow) {
       // Save entered OTP in Redux store (in-memory) and navigate to Reset Password
       dispatch(setUserVerificationOtp(otpCode));
-      toast.info("Verification code confirmed! Please enter your new password.");
-      router.push(
-        `${APP_PATHS.RESET_PASSWORD}?email=${encodeURIComponent(email)}`,
+      toast.info(
+        "Verification code confirmed! Please enter your new password.",
       );
+      router.push(`${APP_PATHS.RESET_PASSWORD}`);
       return;
     }
 

@@ -34,17 +34,14 @@ import { getErrorMessage } from "@/utils";
 
 export const ResetPassword: FC = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
 
   const storeEmail = useAppSelector(selectUserVerificationEmail);
   const storeOtp = useAppSelector(selectUserVerificationOtp);
-  const paramEmail = searchParams.get("email");
-  const paramOtp = searchParams.get("otp");
 
-  const resolvedEmail = (paramEmail || storeEmail || "").trim();
-  const resolvedOtp = (paramOtp || storeOtp || "").trim();
+  const resolvedEmail = (storeEmail || "").trim();
+  const resolvedOtp = (storeOtp || "").trim();
 
   const initialValues: ResetPasswordFormValues = {
     email: resolvedEmail,
@@ -161,7 +158,9 @@ export const ResetPassword: FC = () => {
                   value={values.email}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={touched.email && errors.email ? errors.email : undefined}
+                  error={
+                    touched.email && errors.email ? errors.email : undefined
+                  }
                 />
               )}
 

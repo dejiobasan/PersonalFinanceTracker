@@ -127,9 +127,12 @@ export class AuthController {
     description: 'User logged in successfully',
     type: LoginResponseDto,
   })
+  @UseGuards(OtpThrottlerGuard)
+  @Throttle({ otp: { limit: 3, ttl: 300000 } })
   @ApiResponse({ status: 400, type: ErrorResponseDto })
   @ApiResponse({ status: 401, type: ErrorResponseDto })
   @ApiResponse({ status: 500, type: ErrorResponseDto })
+  @ApiResponse({ status: 429, type: ThrottlerErrorResponseDto })
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
