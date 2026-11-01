@@ -42,6 +42,7 @@ describe('AnalyticsService', () => {
     const res = await service.getAdminAnalytics();
     expect(res.data).toEqual({
       totalUsers: 5,
+      totalTransactions: 10,
       totalDebitTransactions: 7,
       totalCreditTransactions: 3,
       averageTransactionAmount: 100.46,

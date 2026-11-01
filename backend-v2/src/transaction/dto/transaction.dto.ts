@@ -60,6 +60,17 @@ export class AdminTransactionQueryDto extends PaginationQueryDto {
   name?: string;
 }
 
+export class TransactionUserDto {
+  @ApiProperty({ example: '12345678-1234-1234-1234-123456789012' })
+  userId: string;
+
+  @ApiProperty({ example: 'John Doe' })
+  name: string;
+
+  @ApiProperty({ example: 'john.doe@example.com' })
+  email: string;
+}
+
 export class TransactionDataDto {
   @ApiProperty({ example: '12345678-1234-1234-1234-123456789012' })
   transactionId: string;
@@ -78,6 +89,12 @@ export class TransactionDataDto {
 
   @ApiProperty({ example: '2026-10-13T19:00:00.000Z' })
   dateCreated: Date;
+
+  @ApiPropertyOptional({
+    type: () => TransactionUserDto,
+    description: 'User who owns the transaction (included in admin list)',
+  })
+  user?: TransactionUserDto;
 }
 
 export class TransactionResponseDto {

@@ -58,7 +58,7 @@ export class TransactionService {
       const [items, total] = await this.prisma.$transaction([
         this.prisma.transaction.findMany({
           where,
-          include: { user: { select: { userId: true, name: true, email: true } } },
+          include: { user: { select: { userId: true, name: true, email: true, } } },
           orderBy: { dateCreated: 'desc' },
           skip: (page - 1) * limit,
           take: limit,

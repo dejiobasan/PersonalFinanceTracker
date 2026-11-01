@@ -31,5 +31,21 @@ export const endpoints = {
     resendOtp: "/auth/resend-otp",
     forgotPassword: "/auth/forgot-password",
     resetPassword: "/auth/reset-password",
+    changePassword: "/auth/change-password",
+    me: "/auth/me",
+  },
+  users: {
+    getAll: "/users",
+    updateMe: "/users/me",
+    deleteById: (id: string) => `/users/${id}`,
+  },
+  analytics: {
+    admin: "/analytics/admin",
+    me: "/analytics/me",
+  },
+  transactions: {
+    admin: "/transaction/admin",
+    base: "/transaction",
+    byId: (id: string) => `/transaction/${id}`,
   },
 };

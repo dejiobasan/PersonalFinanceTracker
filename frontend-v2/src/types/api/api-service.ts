@@ -605,6 +605,14 @@ export interface components {
             /** @example 2026-10-14T07:52:48.000Z */
             timestamp: string;
         };
+        TransactionUserDto: {
+            /** @example 12345678-1234-1234-1234-123456789012 */
+            userId: string;
+            /** @example John Doe */
+            name: string;
+            /** @example john.doe@example.com */
+            email: string;
+        };
         TransactionDataDto: {
             /** @example 12345678-1234-1234-1234-123456789012 */
             transactionId: string;
@@ -624,6 +632,8 @@ export interface components {
              * @example 2026-10-13T19:00:00.000Z
              */
             dateCreated: string;
+            /** @description User who owns the transaction (included in admin list) */
+            user?: components["schemas"]["TransactionUserDto"];
         };
         TransactionPaginationMetaDto: {
             /** @example 1 */
@@ -716,6 +726,8 @@ export interface components {
         AdminAnalyticsDataDto: {
             /** @example 120 */
             totalUsers: number;
+            /** @example 550 */
+            totalTransactions: number;
             /** @example 340 */
             totalDebitTransactions: number;
             /** @example 210 */

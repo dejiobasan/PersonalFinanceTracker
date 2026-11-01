@@ -112,6 +112,52 @@ export type ResetPasswordFormValues = yup.InferType<
   typeof resetPasswordValidationSchema
 >;
 
+export const updateProfileValidationSchema = yup.object().shape({
+  name: yup
+    .string()
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name cannot exceed 100 characters")
+    .required("Full name is required"),
+  phoneNumber: yup
+    .string()
+    .trim()
+    .matches(/^[0-9]+$/, "Phone number must contain only digits")
+    .min(10, "Phone number must be at least 10 digits")
+    .max(15, "Phone number cannot exceed 15 digits")
+    .required("Phone number is required"),
+  userImage: yup.string().optional(),
+});
+
+export type UpdateProfileFormValues = yup.InferType<
+  typeof updateProfileValidationSchema
+>;
+
+export const changePasswordValidationSchema = yup.object().shape({
+  oldPassword: yup.string().required("Current password is required"),
+  newPassword: yup
+    .string()
+    .required("New password is required")
+    .min(8, "New password must be at least 8 characters")
+    .max(128, "New password cannot exceed 128 characters")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)/,
+      "New password must contain at least one letter and one number",
+    )
+    .notOneOf(
+      [yup.ref("oldPassword")],
+      "New password must be different from your current password",
+    ),
+  confirmPassword: yup
+    .string()
+    .required("Please confirm your new password")
+    .oneOf([yup.ref("newPassword")], "Passwords must match"),
+});
+
+export type ChangePasswordFormValues = yup.InferType<
+  typeof changePasswordValidationSchema
+>;
+
 /** Allowed extensions and MIME types for user avatars */
 export const ALLOWED_AVATAR_EXTENSIONS = [".png", ".jpg", ".jpeg", ".heic"];
 export const ALLOWED_AVATAR_MIME_TYPES = [
