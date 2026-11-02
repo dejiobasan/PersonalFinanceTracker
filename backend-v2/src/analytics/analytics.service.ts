@@ -30,12 +30,15 @@ export class AnalyticsService {
         }),
         this.prisma.transaction.aggregate({ _avg: { amount: true } }),
       ]);
+      const credit = this.countFor(groups, 'CREDIT');
+      const debit = this.countFor(groups, 'DEBIT');
       return {
         message: 'Analytics retrieved successfully',
         data: {
           totalUsers,
-          totalDebitTransactions: this.countFor(groups, 'DEBIT'),
-          totalCreditTransactions: this.countFor(groups, 'CREDIT'),
+          totalTransactions: credit + debit,
+          totalDebitTransactions: debit,
+          totalCreditTransactions: credit,
           averageTransactionAmount: this.round(aggregate._avg.amount),
         },
       };

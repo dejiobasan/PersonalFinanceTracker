@@ -4,6 +4,9 @@ export class AdminAnalyticsDataDto {
   @ApiProperty({ example: 120 })
   totalUsers: number;
 
+  @ApiProperty({ example: 550 })
+  totalTransactions: number;
+
   @ApiProperty({ example: 340 })
   totalDebitTransactions: number;
 
