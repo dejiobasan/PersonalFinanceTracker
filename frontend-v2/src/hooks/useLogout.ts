@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "@/store/hook";
+import { apiSlice } from "@/store/slices/apiSlice";
 import { clearAuthUser } from "@/store/slices/authSlice";
 import { clearSession } from "@/server/auth-session";
 import { useLogoutUserMutation } from "@/services/api";
@@ -19,6 +20,7 @@ export const useLogout = () => {
       await logoutUser().unwrap();
       await clearSession();
       dispatch(clearAuthUser());
+      dispatch(apiSlice.util.resetApiState());
       if (showNotification) {
         toast.success("Logged out successfully");
       }
