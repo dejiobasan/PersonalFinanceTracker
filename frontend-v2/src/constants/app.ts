@@ -1,5 +1,8 @@
 export const APP_PATHS = {
   HOME: "/",
+  ABOUT_US: "/about-us",
+  FAQS: "/faqs",
+  FEATURES: "/features",
   LOGIN: "/login",
   SIGN_UP: "/sign-up",
   FORGOT_PASSWORD: "/forgot-password",
