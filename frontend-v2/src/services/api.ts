@@ -212,6 +212,57 @@ export const apiService = apiSlice.injectEndpoints({
       ) => response,
       providesTags: ["Transactions"],
     }),
+    createTransaction: builder.mutation<
+      IApiService["schemas"]["TransactionResponseDto"],
+      IApiService["schemas"]["CreateTransactionDto"]
+    >({
+      query: (body) => ({
+        url: endpoints.transactions.base,
+        method: REQUEST_METHODS.POST,
+        body,
+      }),
+      transformResponse: (
+        response: IApiService["schemas"]["TransactionResponseDto"],
+      ) => response,
+      invalidatesTags: [
+        "Transactions",
+        "UserAnalytics",
+        "AdminAnalytics",
+        "Users",
+      ],
+    }),
+    updateTransaction: builder.mutation<
+      IApiService["schemas"]["TransactionResponseDto"],
+      { id: string; body: IApiService["schemas"]["UpdateTransactionDto"] }
+    >({
+      query: ({ id, body }) => ({
+        url: endpoints.transactions.byId(id),
+        method: REQUEST_METHODS.PATCH,
+        body,
+      }),
+      transformResponse: (
+        response: IApiService["schemas"]["TransactionResponseDto"],
+      ) => response,
+      invalidatesTags: ["Transactions", "UserAnalytics", "AdminAnalytics"],
+    }),
+    deleteTransaction: builder.mutation<
+      IApiService["schemas"]["DeleteTransactionResponseDto"],
+      string
+    >({
+      query: (id) => ({
+        url: endpoints.transactions.byId(id),
+        method: REQUEST_METHODS.DELETE,
+      }),
+      transformResponse: (
+        response: IApiService["schemas"]["DeleteTransactionResponseDto"],
+      ) => response,
+      invalidatesTags: [
+        "Transactions",
+        "UserAnalytics",
+        "AdminAnalytics",
+        "Users",
+      ],
+    }),
     updateProfile: builder.mutation<
       IApiService["schemas"]["UpdateProfileResponseDto"],
       IApiService["schemas"]["UpdateProfileDto"]
@@ -262,6 +313,9 @@ export const {
   useLazyGetUserAnalyticsQuery,
   useGetUserTransactionsQuery,
   useLazyGetUserTransactionsQuery,
+  useCreateTransactionMutation,
+  useUpdateTransactionMutation,
+  useDeleteTransactionMutation,
   useUpdateProfileMutation,
   useChangePasswordMutation,
 } = apiService;

@@ -158,6 +158,36 @@ export type ChangePasswordFormValues = yup.InferType<
   typeof changePasswordValidationSchema
 >;
 
+export const transactionValidationSchema = yup.object().shape({
+  description: yup
+    .string()
+    .trim()
+    .min(2, "Description must be at least 2 characters")
+    .max(255, "Description cannot exceed 255 characters")
+    .required("Description is required"),
+  amount: yup
+    .number()
+    .typeError("Please enter a valid numeric amount")
+    .positive("Amount must be greater than 0")
+    .test(
+      "max-decimals",
+      "Amount can have at most 2 decimal places",
+      (val) =>
+        val === undefined ||
+        val === null ||
+        /^\d+(\.\d{1,2})?$/.test(String(val)),
+    )
+    .required("Amount is required"),
+  type: yup
+    .mixed<"CREDIT" | "DEBIT">()
+    .oneOf(["CREDIT", "DEBIT"], "Please select a valid transaction type")
+    .required("Transaction type is required"),
+});
+
+export type TransactionFormValues = yup.InferType<
+  typeof transactionValidationSchema
+>;
+
 /** Allowed extensions and MIME types for user avatars */
 export const ALLOWED_AVATAR_EXTENSIONS = [".png", ".jpg", ".jpeg", ".heic"];
 export const ALLOWED_AVATAR_MIME_TYPES = [

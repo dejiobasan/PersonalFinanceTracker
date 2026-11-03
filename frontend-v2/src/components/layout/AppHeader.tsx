@@ -12,7 +12,9 @@ import {
   ArrowRight,
   Sparkles,
   ShieldCheck,
-  CreditCard,
+  Layers,
+  Users,
+  HelpCircle,
   LogIn,
   UserPlus,
 } from "lucide-react";
@@ -20,9 +22,10 @@ import { APP_PATHS } from "@/constants";
 import { useMounted } from "@/hooks";
 
 const navItems = [
-  { name: "Overview", href: APP_PATHS.HOME, icon: Sparkles },
-  { name: "Features", href: "#features", icon: CreditCard },
-  { name: "Security", href: "#security", icon: ShieldCheck },
+  { name: "Home", href: APP_PATHS.HOME, icon: Sparkles },
+  { name: "About Us", href: APP_PATHS.ABOUT_US, icon: Users },
+  { name: "Features", href: APP_PATHS.FEATURES, icon: Layers },
+  { name: "FAQs", href: APP_PATHS.FAQS, icon: HelpCircle },
 ];
 
 const AppHeader = () => {
@@ -69,6 +72,11 @@ const AppHeader = () => {
     };
   }, [isOpen]);
 
+  const isActivePath = (href: string) =>
+    href === APP_PATHS.HOME
+      ? pathname === APP_PATHS.HOME
+      : pathname === href || pathname?.startsWith(`${href}/`);
+
   return (
     <header className="w-full px-4 sm:px-6 lg:px-10 pt-4 sm:pt-6">
       <nav
@@ -90,16 +98,24 @@ const AppHeader = () => {
         </Link>
 
         {/* Desktop Navigation Links (>= 1024px) */}
-        <div className="hidden lg:flex items-center gap-1 xl:gap-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-sm font-medium text-white/80 hover:text-white px-3.5 py-2 rounded-lg hover:bg-white/10 transition-colors duration-200 cursor-pointer"
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
+          {navItems.map((item) => {
+            const active = isActivePath(item.href);
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className={`text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-200 cursor-pointer ${
+                  active
+                    ? "bg-white text-blue-900 shadow-sm shadow-blue-950/20"
+                    : "text-white/85 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Desktop Auth CTAs (>= 1024px) */}
@@ -119,7 +135,7 @@ const AppHeader = () => {
           </Link>
         </div>
 
-        {/* Hamburger Toggle Button (visible on 768px screens and below) */}
+        {/* Hamburger Toggle Button (visible below 1024px) */}
         <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -192,17 +208,36 @@ const AppHeader = () => {
                     <div className="py-8 flex flex-col gap-3">
                       {navItems.map((item) => {
                         const Icon = item.icon;
+                        const active = isActivePath(item.href);
                         return (
                           <Link
                             key={item.name}
                             href={item.href}
+                            aria-current={active ? "page" : undefined}
                             onClick={() => setIsOpen(false)}
-                            className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-lg font-medium text-white/90 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                            className={`flex items-center justify-between px-4 py-3.5 rounded-xl text-lg font-medium transition-colors cursor-pointer ${
+                              active
+                                ? "bg-white/15 text-white border border-white/25"
+                                : "text-white/85 hover:text-white hover:bg-white/10"
+                            }`}
                           >
-                            <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-blue-300">
-                              <Icon className="h-5 w-5" />
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`w-9 h-9 rounded-lg flex items-center justify-center ${
+                                  active
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-white/10 text-blue-300"
+                                }`}
+                              >
+                                <Icon className="h-5 w-5" />
+                              </div>
+                              <span>{item.name}</span>
                             </div>
-                            <span>{item.name}</span>
+                            {active && (
+                              <span className="text-xs font-bold uppercase tracking-wider text-blue-300">
+                                Current
+                              </span>
+                            )}
                           </Link>
                         );
                       })}
@@ -240,7 +275,7 @@ const AppHeader = () => {
               </div>
             )}
           </AnimatePresence>,
-          document.body
+          document.body,
         )}
     </header>
   );

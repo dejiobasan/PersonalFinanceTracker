@@ -1,4 +1,7 @@
 export * from "./home";
+export * from "./about-us";
+export * from "./features";
+export * from "./faqs";
 export * from "./login";
 export * from "./sign-up";
 export * from "./forgot-password";
